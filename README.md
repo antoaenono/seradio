@@ -2,7 +2,7 @@
 
 Software Engineering Radio (SeRadio) is a web deployed radio player that will stream public domain music to connected users.
 
-# With your group, choose a programming language. What language are you using and why?
+## With your group, choose a programming language. What language are you using and why?
 
 JavaScript/TypeScript backend/frontend, using [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) to parse and serve audio to users. 
 
