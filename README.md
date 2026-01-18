@@ -13,10 +13,12 @@ We chose JS/TS for both front and back end to streamline conceptual development,
 ## Authors
 
 Stephen Bangs (stbangs@pdx.edu)
+
 Anton Bilbaeno (bilbaeno@pdx.edu)
+
 Trae Williams (trae@pdx.edu)
 
 ## Version History
 
-* 0.1
-    * Initial Release + Repo + README creation
+* v0.1
+    * Project Setup: Repo creation + README 
