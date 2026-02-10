@@ -1,0 +1,13 @@
+{
+  "JSDoc Module Header": {
+    "scope": "typescript",
+    "prefix": "mod",
+    "body": [
+      "/**",
+      " * @module ${1:moduleName}",
+      " * ${2:Brief description of what this file does.}",
+      " */",
+    ],
+    "description": "JSDoc module header for source files",
+  },
+}

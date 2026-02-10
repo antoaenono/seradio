@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "types": ["bun"], // IDE + tsc support
+
+    // Input
+    "moduleResolution": "bundler", // bun handles resolution of all styles
+
+    // Bun runs .ts directly — no build step needed.
+    // target and module still affect type-checking: available globals and import resolution.
+    "target": "ES2022",
+    "module": "ESNext",
+
+    // How strict
+    "strict": true,
+    "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true, // avoid case-sensitive filesystem issue
+
+    // Interoperability (convenience, trust)
+    "resolveJsonModule": true, // can import .json directly (eg. config files)
+    "skipLibCheck": true, // trust dependency libraries' types
+  },
+  "include": ["src/**/*", "tests/**/*"],
+}

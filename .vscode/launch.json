@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0", // launch config schema version
+
+  // F5 runs whichever config is selected in the debug dropdown
+  // Useful if you want to set a breakpoint instead of console.logging
+  "configurations": [
+    {
+      "name": "Dev Server",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "bun",
+      "args": ["--watch", "src/main.ts"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Test",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "bun",
+      "args": ["test"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
