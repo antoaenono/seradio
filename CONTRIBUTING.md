@@ -5,7 +5,7 @@
 This guide covers five sections:
 
 1. Branches
-2. Commits
+2. Committing
 3. Pull Requests
 4. Versioning
 5. Decisions
@@ -34,7 +34,9 @@ chore/update-deps
 docs/20-api-reference
 ```
 
-## Commit Messages
+## Committing
+
+### Commit Messages
 
 Commit messages follow the [Conventional Commits format](https://www.conventionalcommits.org/).
 
@@ -45,7 +47,7 @@ The **PR title** becomes the squash commit message, so the title **must** follow
 
 For **rebase merge** PRs, each commit must individually follow Conventional Commits format, since each commit lands on `main` as-is.
 
-### Types
+#### Types
 
 | Type       | Description      | Version Bump |
 | ---------- | ---------------- | ------------ |
@@ -68,7 +70,7 @@ This automatically bumps the MAJOR version.
 
 [Version bumps](#versioning) follow [Semantic Versioning](https://semver.org/).
 
-### Examples
+#### Examples
 
 ```
 feat: add audio player component
@@ -76,6 +78,22 @@ feat(player): add seek bar
 fix(audio): resolve playback stutter on Safari
 docs: update setup instructions
 chore: update dependencies
+```
+
+### Pre-commit Hook
+
+A pre-commit hook runs automatically when you commit. It runs on **staged files only** and does the following:
+
+1. **Auto-fixes** formatting (Prettier) and basic linting (import sorting)
+2. **Checks** for lint errors (ESLint) and type errors (TypeScript)
+3. **Runs tests**
+
+If formatting or import sorting is off, the hook fixes it for you. If there are lint or type errors that can't be auto-fixed, the commit is blocked and you'll need to fix them manually.
+
+You can skip the hook with `--no-verify` if needed:
+
+```bash
+git commit -m "wip" --no-verify
 ```
 
 ## Pull Requests
