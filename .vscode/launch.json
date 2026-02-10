@@ -9,7 +9,7 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "bun",
-      "args": ["--watch", "src/main.ts"],
+      "args": ["--watch", "src/server.ts"],
       "console": "integratedTerminal"
     },
     {
