@@ -1,1 +1,20 @@
 .DS_Store
+
+# deps
+node_modules/
+
+# tsc output (bun runs .ts directly)
+src/**/*.js
+tests/**/*.js
+
+# lint cache
+.eslintcache
+
+# bun, not npm
+package-lock.json
+
+# decision record variants (git add -f to commit specific files)
+.dr/
+
+# audio library
+media/
