@@ -22,34 +22,8 @@ export async function parseMp3MetadataToJson(filePath: string): Promise<Mp3Metad
     artist: metadata.common.artist ?? undefined,
     album: metadata.common.album ?? undefined,
     year: metadata.common.year ? String(metadata.common.year) : undefined,
-    comment: readFirstComment(metadata.common.comment),
+    comment: undefined,
     track: metadata.common.track.no || undefined,
     genre: metadata.common.genre?.[0] ?? undefined,
   }
-}
-
-function readFirstComment(comments: unknown): string | undefined {
-  if (!Array.isArray(comments)) {
-    return undefined
-  }
-
-  const comment = comments[0]
-  if (!comment) {
-    return undefined
-  }
-
-  if (typeof comment === 'string') {
-    return comment
-  }
-
-  if (
-    typeof comment === 'object' &&
-    comment !== null &&
-    'text' in comment &&
-    typeof comment.text === 'string'
-  ) {
-    return comment.text
-  }
-
-  return undefined
 }
