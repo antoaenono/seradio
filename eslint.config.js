@@ -25,4 +25,10 @@ export default defineConfig(
       'simple-import-sort/exports': 'error',
     },
   },
+  {
+    files: ['public/**/*.js'],
+    languageOptions: {
+      globals: { ...globals.browser },
+    },
+  },
 )
