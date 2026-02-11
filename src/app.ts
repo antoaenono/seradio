@@ -9,7 +9,6 @@ import pinoHttp from 'pino-http'
 
 import { apiRouter } from './api'
 import { logger } from './logger'
-import { parseMp3MetadataToJson } from './media'
 import { isDev } from './util'
 
 export const app = express()
@@ -38,21 +37,7 @@ app.use(express.static(path.join(import.meta.dirname, '../public')))
 // 4. Mount API routes
 app.use('/api', apiRouter)
 
-// 5. Player metadata route
-app.get('/metadata', async (req, res, next) => {
-  try {
-    const filePath = path.join(
-      import.meta.dirname,
-      '../public/media/Lobo Loco - After Midnight Walk (ID 2412).mp3',
-    )
-    const data = await parseMp3MetadataToJson(filePath)
-    res.json(data)
-  } catch (error) {
-    next(error)
-  }
-})
-
-// 6. App-level 404 (after routes)
+// 5. App-level 404 (after routes)
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' })
 })

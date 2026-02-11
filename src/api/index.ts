@@ -7,7 +7,9 @@
 import { Router } from 'express'
 
 import { healthRouter } from './health'
+import { metadataRouter } from './metadata'
 
 export const apiRouter = Router()
 
 apiRouter.use(healthRouter)
+apiRouter.use(metadataRouter)
