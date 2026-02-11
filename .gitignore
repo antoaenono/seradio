@@ -17,4 +17,4 @@ package-lock.json
 .dr/
 
 # audio library
-media/
+public/media/
