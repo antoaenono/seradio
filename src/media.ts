@@ -23,7 +23,7 @@ export async function parseMp3MetadataToJson(filePath: string): Promise<Mp3Metad
     album: metadata.common.album ?? undefined,
     year: metadata.common.year ? String(metadata.common.year) : undefined,
     comment: undefined,
-    track: metadata.common.track.no || undefined,
+    track: metadata.common.track.no ?? undefined,
     genre: metadata.common.genre?.[0] ?? undefined,
   }
 }
