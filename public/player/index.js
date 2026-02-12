@@ -10,7 +10,7 @@ function displayMetadata(meta) {
 }
 
 async function loadMetadata() {
-  const res = await fetch('/metadata')
+  const res = await fetch('api/metadata')
   const meta = await res.json()
 
   displayMetadata(meta)

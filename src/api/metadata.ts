@@ -12,7 +12,7 @@ export const metadataRouter = Router()
 export const app = express()
 
 //Player metadata route
-app.get('/metadata', async (req, res, next) => {
+metadataRouter.get('/metadata', async (req, res, next) => {
   try {
     const filePath = path.join(
       import.meta.dirname,
