@@ -3,7 +3,6 @@
  * Express application setup: logging, static files, API routes, and 404 handling.
  * Imported by server.ts to start listening and by tests directly.
  */
-
 import express from 'express'
 import path from 'path'
 import pinoHttp from 'pino-http'
