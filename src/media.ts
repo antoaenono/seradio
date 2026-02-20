@@ -1,4 +1,9 @@
+import { readdir } from 'node:fs/promises'
+
 import { parseFile } from 'music-metadata'
+import path from 'path'
+
+const MEDIA_DIR = path.join(import.meta.dirname, '../media')
 
 export type Mp3MetadataJson = {
   title?: string
@@ -11,6 +16,13 @@ export type Mp3MetadataJson = {
 
 export function isMp3File(fileName: string): boolean {
   return /\.mp3$/i.test(fileName.trim())
+}
+
+export async function firstMp3(): Promise<string> {
+  const files = await readdir(MEDIA_DIR)
+  const mp3 = files.find(isMp3File)
+  if (!mp3) throw new Error('No mp3 files found in media/')
+  return path.join(MEDIA_DIR, mp3)
 }
 
 export async function parseMp3MetadataToJson(filePath: string): Promise<Mp3MetadataJson> {
