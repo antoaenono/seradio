@@ -10,5 +10,5 @@ import { execSync } from 'child_process'
 import { existsSync } from 'fs'
 
 if (existsSync('.git')) {
-  execSync('bunx simple-git-hooks', { stdio: 'inherit' })
+  execSync('bun x simple-git-hooks', { stdio: 'inherit' })
 }
