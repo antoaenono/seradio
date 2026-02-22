@@ -1,5 +1,13 @@
 /// <reference lib="dom" />
 
+const details = document.querySelectorAll('#song-meta p')
+const audio = document.getElementById('player')
+const play = document.getElementById('play')
+const seek = document.getElementById('seek')
+const volume = document.getElementById('volume')
+const currentTime = document.getElementById('currentTime')
+const duration = document.getElementById('duration')
+
 function isMissing(value) {
   return value == null || (typeof value === 'string' && value.trim() === '')
 }
@@ -9,8 +17,6 @@ function capitalizeFirst(text) {
 }
 
 function displayMetadata(meta) {
-  const details = document.querySelectorAll('#song-meta p')
-
   details.forEach((deet) => {
     const key = deet.id
     const value = meta[key]
@@ -30,6 +36,39 @@ async function loadMetadata() {
 
   displayMetadata(meta)
 }
+
+play.addEventListener('click', () => {
+  if (audio.paused) {
+    audio.play()
+  } else {
+    audio.pause()
+  }
+})
+
+audio.addEventListener('ended', () => {
+  audio.play()
+})
+
+audio.addEventListener('timeupdate', () => {
+  seek.value = (audio.currentTime / audio.duration) * 100
+  const minutes = Math.floor(audio.currentTime / 60)
+  const seconds = Math.floor(audio.currentTime % 60)
+  currentTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
+})
+
+audio.addEventListener('loadedmetadata', () => {
+  const minutes = Math.floor(audio.duration / 60)
+  const seconds = Math.floor(audio.duration % 60)
+  duration.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
+})
+
+seek.addEventListener('input', () => {
+  audio.currentTime = (seek.value / 100) * audio.duration
+})
+
+volume.addEventListener('input', () => {
+  audio.volume = volume.value
+})
 
 // Run when page loads
 loadMetadata()
