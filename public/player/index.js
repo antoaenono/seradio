@@ -7,6 +7,7 @@ const seek = document.getElementById('seek')
 const volume = document.getElementById('volume')
 const currentTime = document.getElementById('currentTime')
 const duration = document.getElementById('duration')
+let hasDuration = false
 
 function isMissing(value) {
   return value == null || (typeof value === 'string' && value.trim() === '')
@@ -49,18 +50,32 @@ audio.addEventListener('ended', () => {
   audio.play()
 })
 
+function updateDuration() {
+  if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
+    duration.textContent = '0:00'
+    return false
+  }
+
+  const minutes = Math.floor(audio.duration / 60)
+  const seconds = Math.floor(audio.duration % 60)
+  duration.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
+  hasDuration = true
+  return true
+}
+
 audio.addEventListener('timeupdate', () => {
+  if (!hasDuration) {
+    updateDuration()
+  }
+
   seek.value = (audio.currentTime / audio.duration) * 100
   const minutes = Math.floor(audio.currentTime / 60)
   const seconds = Math.floor(audio.currentTime % 60)
   currentTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
 })
 
-audio.addEventListener('loadedmetadata', () => {
-  const minutes = Math.floor(audio.duration / 60)
-  const seconds = Math.floor(audio.duration % 60)
-  duration.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
-})
+audio.addEventListener('loadedmetadata', updateDuration)
+audio.addEventListener('durationchange', updateDuration)
 
 seek.addEventListener('input', () => {
   audio.currentTime = (seek.value / 100) * audio.duration
