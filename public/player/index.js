@@ -26,9 +26,23 @@ function displayMetadata(meta) {
       deet.style.display = 'none'
       return
     }
+
     deet.style.display = 'block'
     deet.textContent = `${capitalizeFirst(key)}: ${value}`
   })
+}
+
+function updateDuration() {
+  if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
+    duration.textContent = '0:00'
+    return false
+  }
+
+  const minutes = Math.floor(audio.duration / 60)
+  const seconds = Math.floor(audio.duration % 60)
+  duration.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
+  hasDuration = true
+  return true
 }
 
 async function loadMetadata() {
@@ -50,24 +64,10 @@ audio.addEventListener('ended', () => {
   audio.play()
 })
 
-function updateDuration() {
-  if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
-    duration.textContent = '0:00'
-    return false
-  }
-
-  const minutes = Math.floor(audio.duration / 60)
-  const seconds = Math.floor(audio.duration % 60)
-  duration.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
-  hasDuration = true
-  return true
-}
-
 audio.addEventListener('timeupdate', () => {
   if (!hasDuration) {
     updateDuration()
   }
-
   seek.value = (audio.currentTime / audio.duration) * 100
   const minutes = Math.floor(audio.currentTime / 60)
   const seconds = Math.floor(audio.currentTime % 60)
@@ -75,6 +75,7 @@ audio.addEventListener('timeupdate', () => {
 })
 
 audio.addEventListener('loadedmetadata', updateDuration)
+
 audio.addEventListener('durationchange', updateDuration)
 
 seek.addEventListener('input', () => {
