@@ -11,7 +11,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 300px;
+  width: 400px;
   padding: 20px;
   border-radius: 10px;
   background-color: #70d598;
@@ -22,4 +22,21 @@
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+#player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+#song-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
 }

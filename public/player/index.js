@@ -1,11 +1,22 @@
 /// <reference lib="dom" />
 
-function displayMetadata(meta) {
-  Object.entries(meta).forEach(([key, value]) => {
-    const el = document.getElementById(key)
-    if (!el) return
+function isMissing(value) {
+  return value == null || (typeof value === 'string' && value.trim() === '')
+}
 
-    el.textContent = `${key}: ${value ?? 'Unknown'}`
+function displayMetadata(meta) {
+  const details = document.querySelectorAll('#song-meta p')
+
+  details.forEach((deet) => {
+    const key = deet.id
+    const value = meta[key]
+
+    if (isMissing(value)) {
+      deet.style.display = 'none'
+      return
+    }
+    deet.style.display = 'block'
+    deet.textContent = `${key}: ${value ?? 'Unknown'}`
   })
 }
 
