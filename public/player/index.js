@@ -4,6 +4,10 @@ function isMissing(value) {
   return value == null || (typeof value === 'string' && value.trim() === '')
 }
 
+function capitalizeFirst(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
 function displayMetadata(meta) {
   const details = document.querySelectorAll('#song-meta p')
 
@@ -16,7 +20,7 @@ function displayMetadata(meta) {
       return
     }
     deet.style.display = 'block'
-    deet.textContent = `${key}: ${value ?? 'Unknown'}`
+    deet.textContent = `${capitalizeFirst(key)}: ${value}`
   })
 }
 
