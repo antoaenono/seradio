@@ -5,6 +5,8 @@ decided: 2026-02-18
 status: proposed
 deciders: @antoaenono
 tags: [scheduler, playback]
+parent: null
+children: [scheduler/segmentation, scheduler/playout, scheduler/schedule]
 ---
 
 # ADR: Scheduler
