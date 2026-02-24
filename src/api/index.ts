@@ -8,10 +8,8 @@ import { Router } from 'express'
 
 import { audioRouter } from './audio'
 import { healthRouter } from './health'
-import { metadataRouter } from './metadata'
 
 export const apiRouter = Router()
 
 apiRouter.use(audioRouter)
 apiRouter.use(healthRouter)
-apiRouter.use(metadataRouter)

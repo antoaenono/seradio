@@ -1,17 +1,14 @@
 /**
- * @module api/metadata
+ * @module api/audio/metadata
+ * Serves ID3 metadata (title, artist, album, etc.) for the current track.
  */
-
-import express from 'express'
 import { Router } from 'express'
 
-import { firstMp3, parseMp3MetadataToJson } from '.././media'
+import { firstMp3, parseMp3MetadataToJson } from '../../audio'
 
 export const metadataRouter = Router()
-export const app = express()
 
-//Player metadata route
-metadataRouter.get('/metadata', async (req, res, next) => {
+metadataRouter.get('/', async (req, res, next) => {
   try {
     const filePath = await firstMp3()
     const data = await parseMp3MetadataToJson(filePath)
