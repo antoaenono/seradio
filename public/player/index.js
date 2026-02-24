@@ -3,11 +3,8 @@
 const details = document.querySelectorAll('#song-meta p')
 const audio = document.getElementById('player')
 const play = document.getElementById('play')
-const seek = document.getElementById('seek')
 const volume = document.getElementById('volume')
-const currentTime = document.getElementById('currentTime')
-const duration = document.getElementById('duration')
-let hasDuration = false
+const playIcon = document.getElementById('play-icon')
 
 function isMissing(value) {
   return value == null || (typeof value === 'string' && value.trim() === '')
@@ -32,19 +29,6 @@ function displayMetadata(meta) {
   })
 }
 
-function updateDuration() {
-  if (!Number.isFinite(audio.duration) || audio.duration <= 0) {
-    duration.textContent = '0:00'
-    return false
-  }
-
-  const minutes = Math.floor(audio.duration / 60)
-  const seconds = Math.floor(audio.duration % 60)
-  duration.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
-  hasDuration = true
-  return true
-}
-
 async function loadMetadata() {
   const res = await fetch('/api/metadata')
   const meta = await res.json()
@@ -54,8 +38,10 @@ async function loadMetadata() {
 
 play.addEventListener('click', () => {
   if (audio.paused) {
+    playIcon.src = '../images/stop-button-svgrepo-com.svg'
     audio.play()
   } else {
+    playIcon.src = '../images/play-button-svgrepo-com.svg'
     audio.pause()
   }
 })
@@ -64,26 +50,14 @@ audio.addEventListener('ended', () => {
   audio.play()
 })
 
-audio.addEventListener('timeupdate', () => {
-  if (!hasDuration) {
-    updateDuration()
-  }
-  seek.value = (audio.currentTime / audio.duration) * 100
-  const minutes = Math.floor(audio.currentTime / 60)
-  const seconds = Math.floor(audio.currentTime % 60)
-  currentTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
-})
-
-audio.addEventListener('loadedmetadata', updateDuration)
-
-audio.addEventListener('durationchange', updateDuration)
-
-seek.addEventListener('input', () => {
-  audio.currentTime = (seek.value / 100) * audio.duration
+volume.addEventListener('input', () => {
+  audio.volume = volume.value
 })
 
 volume.addEventListener('input', () => {
   audio.volume = volume.value
+  const percent = volume.value * 100
+  volume.style.background = `linear-gradient(to right, #4CAF50 ${percent}%, #ddd ${percent}%)`
 })
 
 // Run when page loads
