@@ -9,9 +9,21 @@ import pinoHttp from 'pino-http'
 
 import { apiRouter } from './api'
 import { logger } from './logger'
+import * as playout from './playout'
+import * as schedule from './schedule'
 import { isDev } from './util'
 
 export const app = express()
+
+/**
+ * Wire up the schedule and playout, then start the tick loop.
+ * Call before app.listen().
+ * This is in a function so tests can avoid `ffmpeg` making audio segments.
+ */
+export async function init(): Promise<void> {
+  await playout.init(() => schedule.next())
+  await playout.start()
+}
 
 // 1. HTTP Logging (first, so it sees all requests)
 // dev: minimal output
