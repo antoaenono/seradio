@@ -20,7 +20,7 @@ function displayMetadata(meta) {
     const value = meta[key]
 
     if (isMissing(value)) {
-      deet.style.display = 'none'
+      deet.textContent = `${capitalizeFirst(key)}: Unknown`
       return
     }
 
