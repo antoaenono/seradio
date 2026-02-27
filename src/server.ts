@@ -1,12 +1,21 @@
 /**
  * @module server
- * Entry point. Starts the Express server on the configured port.
+ * Entry point. Initializes the app and starts listening.
  */
-import { app } from './app'
+import { app, init } from './app'
 import { logger } from './logger'
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
-  logger.info(`Server running at http://localhost:${PORT}`)
-})
+/**
+ * Run initialization before exposing the Express server.
+ */
+async function start(): Promise<void> {
+  await init()
+
+  app.listen(PORT, () => {
+    logger.info(`Server running at http://localhost:${PORT}`)
+  })
+}
+
+await start()
