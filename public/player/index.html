@@ -2,23 +2,39 @@
 <html lang="en">
   <head>
     <title>seradio</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+    <link rel="stylesheet" href="player.css" />
   </head>
   <body>
-    <div>player</div>
-    <!-- TODO: seek bar and time display are inaccurate for live HLS, hide or replace -->
-    <audio id="player" controls></audio>
+    <div id="container">
+      <div id="card">
+        <div id="card-title">SeRadio</div>
+        <audio id="player"></audio>
 
-    <div id="songMeta">
-      <p id="title"></p>
-      <p id="artist"></p>
-      <p id="album"></p>
-      <p id="year"></p>
-      <p id="comment"></p>
-      <p id="track"></p>
-      <p id="genre"></p>
+        <button id="play">
+          <img id="play-icon" src="../images/play-button-svgrepo-com.svg" alt="Play" />
+        </button>
+        <input type="range" id="volume" value="1" min="0" max="1" step="0.01" />
+
+        <div id="below">
+          <div id="song-meta">
+            <p id="title"></p>
+            <p id="artist"></p>
+            <p id="album"></p>
+            <p id="year"></p>
+            <p id="genre"></p>
+          </div>
+
+          <ol id="history">
+            <p id="history1" class="history-title">History1</p>
+            <p id="history2" class="history-title">History2</p>
+            <p id="history3" class="history-title">History3</p>
+            <p id="history4" class="history-title">History4</p>
+            <p id="history5" class="history-title">History5</p>
+          </ol>
+        </div>
+      </div>
     </div>
 
-    <script src="index.js"></script>
+    <script src="player.js"></script>
   </body>
 </html>
