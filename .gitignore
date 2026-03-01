@@ -16,6 +16,5 @@ package-lock.json
 # decision record variants (git add -f to commit specific files)
 .dr/
 
-# audio library
-media/
-public/media
+# audio library and HLS segments
+/audio/

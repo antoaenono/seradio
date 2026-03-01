@@ -34,6 +34,20 @@ chore/update-deps
 docs/20-api-reference
 ```
 
+### Cleaning Up Stale Branches
+
+After merging and deleting branches via GitHub, your local repo still holds references to them. To clean up:
+
+```bash
+# 1. Remove remote-tracking refs for branches deleted on the remote
+git fetch --prune
+
+# 2. Delete local branches that have been merged into main
+git branch --merged main | grep -v '^\*\|main' | xargs git branch -d
+```
+
+`git fetch --prune` removes stale `origin/...` references. The second command deletes local branches already merged into `main` (using `-d`, which refuses to delete unmerged branches).
+
 ## Committing
 
 ### Commit Messages

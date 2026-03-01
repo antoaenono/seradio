@@ -9,15 +9,15 @@
     "test:watch": "bun test --watch",
     "lint": "eslint --cache --max-warnings 0 src/ tests/",
     "lint:fix": "eslint --fix --cache --max-warnings 0 src/ tests/",
-    "typecheck": "bunx tsc --noEmit",
-    "format": "bunx prettier --check .",
-    "format:fix": "bunx prettier --write .",
+    "typecheck": "bun x tsc --noEmit",
+    "format": "bun x prettier --check .",
+    "format:fix": "bun x prettier --write .",
     "fix": "bun run lint:fix && bun run format:fix",
     "check": "bun run format && bun run lint && bun run typecheck && bun test",
     "release": "commit-and-tag-version"
   },
   "simple-git-hooks": {
-    "pre-commit": "bunx lint-staged && bun run typecheck && bun test"
+    "pre-commit": "bun x lint-staged && bun run typecheck && bun test"
   },
   "lint-staged": {
     "*.{json,md,yml,html,css}": "prettier --write",
@@ -27,6 +27,7 @@
     ]
   },
   "dependencies": {
+    "@rse/ffmpeg": "^1.4.2",
     "express": "^5.0.0",
     "music-metadata": "^11.12.0",
     "pino": "^10.3.0",
@@ -48,5 +49,8 @@
     "simple-git-hooks": "^2.11.0",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.21.0"
-  }
+  },
+  "trustedDependencies": [
+    "@rse/ffmpeg"
+  ]
 }
