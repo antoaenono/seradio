@@ -3,6 +3,8 @@ import { readdir } from 'node:fs/promises'
 import { parseFile } from 'music-metadata'
 import path from 'path'
 
+import { logger } from './logger'
+
 const AUDIO_DIR = path.join(import.meta.dirname, '../media')
 
 export type Mp3MetadataJson = {
@@ -23,7 +25,9 @@ export async function getRandomMp3(): Promise<string> {
   const mp3Files: string[] = files.filter(isMp3File)
   if (mp3Files.length === 0) throw new Error('No mp3 files found in media/')
   const randomIndex: number = Math.floor(Math.random() * mp3Files.length)
-  return path.join(AUDIO_DIR, mp3Files[randomIndex])
+  const chosenMp3: string = path.join(AUDIO_DIR, mp3Files[randomIndex])
+  logger.info({ path: chosenMp3, total: mp3Files.length }, 'selected random mp3')
+  return chosenMp3
 }
 
 export async function parseMp3MetadataToJson(filePath: string): Promise<Mp3MetadataJson> {

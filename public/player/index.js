@@ -84,6 +84,6 @@ async function loadMetadata() {
   }
 }
 
-// Run when page loads, then refresh every 5 seconds
+// Run when page loads, then refresh every 1 second
 loadMetadata()
-setInterval(loadMetadata, 5000)
+setInterval(loadMetadata, 1000)
