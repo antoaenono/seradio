@@ -8,13 +8,13 @@ flowchart LR
     AP["append()"] -->|push| Q[queue]
     Q --> D{empty?}
     D -->|shift off front| N["next()"]
-    D -->|yes| F["getRandomMp3()"] --> N
+    D -->|yes| F["firstMp3()"] --> N
 ```
 
 The schedule is also a FIFO like the playout [buffer](./playout.md#buffer).
 `next()` pops the front or calls the fallback function if empty.
 
-The schedule is currently hard-coded to default to `getRandomMp3()` as a fallback when the queue is empty.
+The schedule is currently hard-coded to default to `firstMp3()` as a fallback when the queue is empty.
 
 The `next()` function is intended to be passed into the playout as the `getNextTrack` callback.
 See [How the Schedule feeds the Playout](./architecture.md#how-the-schedule-feeds-the-playout) for more details.

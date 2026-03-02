@@ -5,7 +5,7 @@
 import path from 'path'
 
 // Paths
-export const SEGMENT_DIR = path.join(import.meta.dirname, '../../media/segments')
+export const SEGMENT_DIR = path.join(import.meta.dirname, '../../audio/segments')
 export const WINDOW_PATH = path.join(SEGMENT_DIR, 'playlist.m3u8')
 
 // HLS

@@ -2,10 +2,10 @@
  * @module schedule/schedule
  * Upcoming track list with a fallback for when the schedule is empty.
  */
-import { getRandomMp3 } from '../audio'
+import { firstMp3 } from '../audio'
 
 const schedule: string[] = []
-const fallbackFn = getRandomMp3
+const fallbackFn = firstMp3
 
 /**
  * Append an audio track path to the end of the schedule.
