@@ -66,8 +66,6 @@ function displayMetadata(meta) {
     const key = deet.id
     const value = meta[key]
 
-    deet.style.display = 'block'
-
     if (isMissing(value)) {
       deet.textContent = `${capitalizeFirst(key)}: Unknown`
       return
