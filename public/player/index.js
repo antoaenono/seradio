@@ -66,22 +66,26 @@ function displayMetadata(meta) {
     const key = deet.id
     const value = meta[key]
 
+    deet.style.display = 'block'
+
     if (isMissing(value)) {
       deet.textContent = `${capitalizeFirst(key)}: Unknown`
       return
     }
 
-    deet.style.display = 'block'
     deet.textContent = `${capitalizeFirst(key)}: ${value}`
   })
 }
 
 async function loadMetadata() {
-  const res = await fetch('/api/metadata')
+  const res = await fetch('/api/audio/metadata')
   const meta = await res.json()
 
-  displayMetadata(meta)
+  if (!meta.error) {
+    displayMetadata(meta)
+  }
 }
 
-// Run when page loads
+// Run when page loads, then refresh every 5 seconds
 loadMetadata()
+setInterval(loadMetadata, 5000)
