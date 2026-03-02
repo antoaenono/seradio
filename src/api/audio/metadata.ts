@@ -4,13 +4,13 @@
  */
 import { Router } from 'express'
 
-import { firstMp3, parseMp3MetadataToJson } from '../../audio'
+import { getRandomMp3, parseMp3MetadataToJson } from '../../audio'
 
 export const metadataRouter = Router()
 
 metadataRouter.get('/', async (req, res, next) => {
   try {
-    const filePath = await firstMp3()
+    const filePath: string = await getRandomMp3()
     const data = await parseMp3MetadataToJson(filePath)
     res.json(data)
   } catch (error) {
