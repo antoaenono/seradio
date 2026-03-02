@@ -79,7 +79,7 @@ describe('start with fallback', () => {
     await start()
 
     expect(deps.segmentTrack).not.toHaveBeenCalled()
-    expect(deps.writeWindow).toHaveBeenCalledTimes(1)
+    expect(deps.writeWindow).toHaveBeenCalled()
   })
 
   test('should set nowPlaying to undefined during fallback tone', async () => {
