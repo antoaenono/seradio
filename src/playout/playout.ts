@@ -45,6 +45,7 @@ let toneSegments: SegmenterOutput[]
 const buffer: Segment[] = []
 let segmentIndex = 0 // increments for each tick (aka "media sequence" in HLS terms)
 let isAdvancing = false
+let stopped = true
 const BUFFER_THRESHOLD = bufferThreshold(
   SEGMENT_DURATION,
   MAX_TRACK_DURATION,
@@ -57,6 +58,7 @@ let trackIndex = 0 // used as prefix for segment filenames (t0_, t1_, ...) and l
 let getNextTrack: () => Promise<string>
 const trackPaths = new Map<number, string>() // trackIndex -> mp3 path
 let currentTrackPath: string | undefined
+let tickTimer: ReturnType<typeof setTimeout> | undefined
 
 // Injectable dependencies for testing purposes (default to real implementations)
 let _segmentTrack = defaultSegmentTrack
@@ -93,13 +95,14 @@ export async function init(nextTrack: () => Promise<string>, deps?: PlayoutDeps)
  * Segment the first track, write the initial window and kick off the tick loop.
  */
 export async function start(): Promise<void> {
+  stopped = false
   await advance()
   currentTrackPath = trackPaths.get(buffer[0]?.trackId)
   await _writeWindow(buffer.slice(0, WINDOW_SIZE), segmentIndex)
   logger.info({ segments: buffer.length }, 'playout started')
 
   // First tick after the first segment's duration
-  setTimeout(tick, buffer[0].duration * 1000)
+  tickTimer = setTimeout(tick, buffer[0].duration * 1000)
 }
 
 /**
@@ -139,6 +142,7 @@ async function advance(): Promise<void> {
  * Fires advance() when the buffer drops below the threshold.
  */
 async function tick(): Promise<void> {
+  if (stopped) return
   const old = buffer.shift() // Remove the segment that just played
   const current = buffer[0]
 
@@ -170,7 +174,7 @@ async function tick(): Promise<void> {
 
   // Schedule the next tick after the front segment's duration elapses
   if (current) {
-    setTimeout(tick, current.duration * 1000)
+    tickTimer = setTimeout(tick, current.duration * 1000)
   } else {
     logger.error('buffer empty, tick loop stopped')
   }
@@ -260,6 +264,9 @@ function silenceGap(trackId: number): Segment[] {
 
 /** Reset all module state. For tests only. */
 export function _reset(): void {
+  stopped = true
+  if (tickTimer) clearTimeout(tickTimer)
+  tickTimer = undefined
   buffer.length = 0
   segmentIndex = 0
   trackIndex = 0
