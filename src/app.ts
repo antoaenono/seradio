@@ -31,6 +31,14 @@ export async function init(): Promise<void> {
 app.use(
   pinoHttp({
     logger,
+    // Silence successful requests in dev to reduce noise; keep warnings/errors
+    customLogLevel: isDev
+      ? (req, res, err) => {
+          if (err || res.statusCode >= 500) return 'error'
+          if (res.statusCode >= 400) return 'warn'
+          return 'silent'
+        }
+      : undefined,
     serializers: isDev
       ? {
           req: (req) => ({ method: req.method, url: req.url }),
