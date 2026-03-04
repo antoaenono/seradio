@@ -37,7 +37,6 @@ function capitalizeFirst(text) {
 
 if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   const hls = new Hls({ liveSyncDurationCount: 1 })
-  hls.loadSource('/api/audio/')
   hls.attachMedia(audio)
 
   // Stop fetching on pause, resume from live on play
@@ -49,7 +48,7 @@ if (typeof Hls !== 'undefined' && Hls.isSupported()) {
     }
   })
 } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-  audio.src = '/api/audio/'
+  // Safari native HLS: source set on play click
 }
 
 //Controls Player
