@@ -102,26 +102,11 @@ async function loadMetadata() {
 loadMetadata()
 setInterval(loadMetadata, 1000)
 
-// Volume and autoplay preference js created with help from Github Copilot
-// Apply saved preferences
+// Apply saved volume preference
 if (window.seradioPrefs) {
-  const prefs = window.seradioPrefs
-  // Restore volume
-  const savedVol = prefs.defaultVolume / 100
+  const savedVol = window.seradioPrefs.defaultVolume / 100
   audio.volume = savedVol
   volume.value = savedVol
   const percent = savedVol * 100
   volume.style.background = `linear-gradient(to right, #4CAF50 ${percent}%, #ddd ${percent}%)`
-
-  // Autoplay (browsers may block, but we try)
-  if (prefs.autoplay) {
-    audio
-      .play()
-      .then(() => {
-        playIcon.src = '../images/stop-button-svgrepo-com.svg'
-      })
-      .catch(() => {
-        // Autoplay blocked by browser — user needs to click play
-      })
-  }
 }
