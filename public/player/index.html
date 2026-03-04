@@ -1,11 +1,25 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>seradio</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SeRadio Player</title>
     <link rel="stylesheet" href="index.css" />
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
   </head>
   <body>
+    <!-- Player Page Navbar HTML created with help from Github Copilot -->
+    <!-- Navigation Bar -->
+    <nav id="navbar">
+      <div class="nav-brand"><a href="/">SeRadio</a></div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/player/" class="active">Player</a></li>
+        <li><a href="/admin/">Admin</a></li>
+      </ul>
+      <button id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+    </nav>
+
     <div id="container">
       <div id="card">
         <div id="card-title">SeRadio</div>
@@ -36,6 +50,7 @@
       </div>
     </div>
 
+    <script src="/seradio-prefs.js"></script>
     <script src="index.js"></script>
   </body>
 </html>

@@ -74,12 +74,13 @@ describe('start', () => {
 
 describe('start with fallback', () => {
   test('should fill buffer with tone when no tracks available', async () => {
+    _reset()
     const deps = fakeDeps()
     await init(() => Promise.reject(new Error('no tracks')), deps)
     await start()
 
     expect(deps.segmentTrack).not.toHaveBeenCalled()
-    expect(deps.writeWindow).toHaveBeenCalled()
+    expect(deps.writeWindow).toHaveBeenCalledTimes(1)
   })
 
   test('should set nowPlaying to undefined during fallback tone', async () => {
