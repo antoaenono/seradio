@@ -34,28 +34,37 @@ function capitalizeFirst(text) {
 // Main functions
 
 // HLS playback
+// Each play flushes stale buffers and fetches a fresh manifest from the live edge.
+// reloadSource is set per browser path; the click handler calls it before audio.play().
+let reloadSource = () => {}
 
+// hls.js path (Chrome, Firefox, Edge)
 if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   const hls = new Hls({ liveSyncDurationCount: 1 })
   hls.loadSource('/api/audio/')
   hls.attachMedia(audio)
 
-  // Stop fetching on pause, resume from live on play
+  // Stop fetching segments while paused to save bandwidth
   audio.addEventListener('pause', () => hls.stopLoad())
-  audio.addEventListener('play', () => {
-    hls.startLoad()
-    if (hls.liveSyncPosition != null) {
-      audio.currentTime = hls.liveSyncPosition
-    }
-  })
+
+  reloadSource = () => {
+    hls.loadSource('/api/audio/')
+    hls.startLoad(-1) // -1 = default start position (live edge)
+  }
+  // Safari native HLS
 } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
   audio.src = '/api/audio/'
+
+  reloadSource = () => {
+    audio.src = '/api/audio/'
+  }
 }
 
 //Controls Player
 play.addEventListener('click', () => {
   if (audio.paused) {
     playIcon.src = '../images/stop-button-svgrepo-com.svg'
+    reloadSource()
     audio.play()
   } else {
     playIcon.src = '../images/play-button-svgrepo-com.svg'
