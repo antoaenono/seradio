@@ -1,0 +1,132 @@
+/* HLS Debug Panel */
+#hls-debug {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-height: 40vh;
+  overflow-y: auto;
+  background: #1a1a1a;
+  color: #ccc;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  z-index: 999;
+  border-top: 2px solid #333;
+}
+
+#hls-debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: #222;
+  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+}
+
+#hls-debug-header span {
+  font-weight: 700;
+  color: #70d598;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+#hls-debug-clear {
+  background: #333;
+  color: #aaa;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+#hls-debug-clear:hover {
+  background: #444;
+  color: #fff;
+}
+
+#hls-debug-header kbd {
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 10px;
+  color: #888;
+}
+
+#hls-debug.hidden {
+  display: none;
+}
+
+#hls-debug-timeline {
+  padding: 8px 12px;
+}
+
+.debug-session {
+  margin-bottom: 8px;
+  border-left: 2px solid #555;
+  padding-left: 10px;
+}
+
+.debug-session-label {
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.debug-session-label .action {
+  font-weight: 700;
+}
+
+.debug-session-label .action.play {
+  color: #4caf50;
+}
+.debug-session-label .action.pause {
+  color: #ff9800;
+}
+.debug-session-label .action.reload {
+  color: #2196f3;
+}
+
+.debug-manifest {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 3px 0;
+  flex-wrap: wrap;
+}
+
+.debug-manifest-label {
+  color: #9c27b0;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+.debug-seg {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.debug-seg.fetched {
+  background: #1b5e20;
+  color: #a5d6a7;
+}
+
+.debug-seg.in-window {
+  background: #1a237e;
+  color: #9fa8da;
+}
+
+.debug-seg.silence {
+  background: #333;
+  color: #777;
+}
+
+.debug-buffered {
+  color: #666;
+  margin-top: 2px;
+}

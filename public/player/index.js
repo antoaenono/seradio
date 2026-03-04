@@ -43,6 +43,9 @@ if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   const hls = new Hls({ liveSyncDurationCount: 1 })
   hls.attachMedia(audio)
 
+  // Debug hook: hls-debug.js reads these if present
+  window.hlsDebug = { audio, hls }
+
   // Stop fetching segments while paused to save bandwidth
   audio.addEventListener('pause', () => hls.stopLoad())
 
@@ -52,6 +55,9 @@ if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   }
   // Safari native HLS
 } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+  // Debug hook: hls-debug.js reads these if present
+  window.hlsDebug = { audio, hls: null }
+
   reloadSource = () => {
     audio.src = '/api/audio/'
   }
