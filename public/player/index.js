@@ -34,28 +34,38 @@ function capitalizeFirst(text) {
 // Main functions
 
 // HLS playback
+// Each play flushes stale buffers and fetches a fresh manifest from the live edge.
+// reloadSource is set per browser path; the click handler calls it before audio.play().
+let reloadSource = () => {}
 
+// hls.js path (Chrome, Firefox, Edge)
 if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   const hls = new Hls({ liveSyncDurationCount: 1 })
   hls.attachMedia(audio)
 
-  // Stop fetching on pause, resume from live on play
+  // Stop fetching segments while paused to save bandwidth
   audio.addEventListener('pause', () => hls.stopLoad())
-  audio.addEventListener('play', () => {
-    hls.startLoad()
-    if (hls.liveSyncPosition != null) {
-      audio.currentTime = hls.liveSyncPosition
-    }
-  })
+
+  reloadSource = () => {
+    hls.loadSource('/api/audio/')
+    hls.startLoad(-1) // -1 = default start position (live edge)
+  }
+  // Safari native HLS
 } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-  // Safari native HLS: source set on play click
+  reloadSource = () => {
+    audio.src = '/api/audio/'
+  }
 }
 
-//Controls Player
+// Play/pause toggle - reloadSource must be called before audio.play()
+// to avoid loadSource tearing down the MediaSource mid-play
 play.addEventListener('click', () => {
   if (audio.paused) {
     playIcon.src = '../images/stop-button-svgrepo-com.svg'
-    audio.play()
+    reloadSource()
+    audio.play().catch(() => {
+      playIcon.src = '../images/play-button-svgrepo-com.svg'
+    })
   } else {
     playIcon.src = '../images/play-button-svgrepo-com.svg'
     audio.pause()
