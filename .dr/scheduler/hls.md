@@ -6,7 +6,7 @@ status: proposed
 deciders: @antoaenono
 tags: [scheduler, playback]
 parent: null
-children: [scheduler/segmentation, scheduler/playout, scheduler/schedule]
+children: [scheduler/segmentation, scheduler/playout, scheduler/schedule, scheduler/client-resume]
 ---
 
 # ADR: Scheduler
