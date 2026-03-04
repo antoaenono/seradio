@@ -37,7 +37,6 @@ function capitalizeFirst(text) {
 
 if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   const hls = new Hls({ liveSyncDurationCount: 1 })
-  hls.loadSource('/api/audio/')
   hls.attachMedia(audio)
 
   // Stop fetching on pause, resume from live on play
@@ -49,7 +48,7 @@ if (typeof Hls !== 'undefined' && Hls.isSupported()) {
     }
   })
 } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-  audio.src = '/api/audio/'
+  // Safari native HLS: source set on play click
 }
 
 //Controls Player
@@ -112,16 +111,4 @@ if (window.seradioPrefs) {
   volume.value = savedVol
   const percent = savedVol * 100
   volume.style.background = `linear-gradient(to right, #4CAF50 ${percent}%, #ddd ${percent}%)`
-
-  // Autoplay (browsers may block, but we try)
-  if (prefs.autoplay) {
-    audio
-      .play()
-      .then(() => {
-        playIcon.src = '../images/stop-button-svgrepo-com.svg'
-      })
-      .catch(() => {
-        // Autoplay blocked by browser — user needs to click play
-      })
-  }
 }
