@@ -41,11 +41,13 @@ const canvas = document.getElementById('visualizer')
     let rafId = null
 
     // Build logarithmic bin edges so bass frequencies get more bars.
-    // Maps N visual bars across all frequencyBinCount bins with log spacing.
+    // Only map up to ~75% of bins (~16kHz) since the top bins are
+    // almost always silent and create a visible dead zone.
     const bars = 64
+    const usableBins = Math.floor(bufferLength * 0.75)
     const binEdges = new Array(bars + 1)
     for (let i = 0; i <= bars; i++) {
-      binEdges[i] = Math.round(Math.pow(bufferLength, i / bars))
+      binEdges[i] = Math.round(Math.pow(usableBins, i / bars))
     }
 
     function render() {
