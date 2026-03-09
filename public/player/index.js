@@ -104,8 +104,18 @@ const canvas = document.getElementById('visualizer')
       if (audioCtx.state === 'suspended') audioCtx.resume()
       const analyser = audioCtx.createAnalyser()
       analyser.fftSize = 256
-      const source = audioCtx.createMediaStreamSource(audio.captureStream())
-      source.connect(analyser)
+
+      // Re-capture the stream on each resume because reloadSource() tears
+      // down the HLS session, invalidating the previous MediaStream.
+      let source = null
+      function reconnect() {
+        if (source) source.disconnect()
+        source = audioCtx.createMediaStreamSource(audio.captureStream())
+        source.connect(analyser)
+      }
+      audio.addEventListener('playing', reconnect)
+      reconnect()
+
       syncSize()
       draw(analyser)
     } catch {
