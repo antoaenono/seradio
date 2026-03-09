@@ -106,6 +106,7 @@ const canvas = document.getElementById('visualizer')
     audio.addEventListener('pause', () => {
       if (rafId != null) cancelAnimationFrame(rafId)
       rafId = null
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
     })
     render()
   }
