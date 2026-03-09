@@ -40,6 +40,14 @@ const canvas = document.getElementById('visualizer')
     const dataArray = new Uint8Array(bufferLength)
     let rafId = null
 
+    // Build logarithmic bin edges so bass frequencies get more bars.
+    // Maps N visual bars across all frequencyBinCount bins with log spacing.
+    const bars = 64
+    const binEdges = new Array(bars + 1)
+    for (let i = 0; i <= bars; i++) {
+      binEdges[i] = Math.round(Math.pow(bufferLength, i / bars))
+    }
+
     function render() {
       rafId = requestAnimationFrame(render)
       analyser.getByteFrequencyData(dataArray)
@@ -50,15 +58,19 @@ const canvas = document.getElementById('visualizer')
       const cy = h / 2
       const minSize = Math.min(w, h)
       const innerRadius = minSize * 0.23
-      const bars = 96
-      const step = Math.max(1, Math.floor(bufferLength / bars))
       const lineWidth = Math.max(2, minSize * 0.008)
 
       ctx.clearRect(0, 0, w, h)
       ctx.lineCap = 'round'
 
       for (let i = 0; i < bars; i += 1) {
-        const value = dataArray[i * step] / 255
+        // Average the frequency bins that fall within this visual bar
+        const lo = binEdges[i]
+        const hi = Math.max(lo + 1, binEdges[i + 1])
+        let sum = 0
+        for (let b = lo; b < hi; b++) sum += dataArray[b]
+        const value = sum / ((hi - lo) * 255)
+
         const angle = (i / bars) * Math.PI * 2 - Math.PI / 2
         const length = minSize * (0.035 + value * 0.14)
         const x1 = cx + Math.cos(angle) * innerRadius
