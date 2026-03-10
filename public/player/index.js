@@ -147,7 +147,6 @@ let reloadSource = () => {}
 // hls.js path (Chrome, Firefox, Edge)
 if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   const hls = new Hls({ liveSyncDurationCount: 1 })
-  hls.loadSource('/api/audio/')
   hls.attachMedia(audio)
 
   // Stop fetching segments while paused to save bandwidth
@@ -159,8 +158,6 @@ if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   }
   // Safari native HLS
 } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-  audio.src = '/api/audio/'
-
   reloadSource = () => {
     audio.src = '/api/audio/'
   }
@@ -230,16 +227,4 @@ if (window.seradioPrefs) {
   volume.value = savedVol
   const percent = savedVol * 100
   volume.style.background = `linear-gradient(to right, #4CAF50 ${percent}%, #ddd ${percent}%)`
-
-  // Autoplay (browsers may block, but we try)
-  if (prefs.autoplay) {
-    audio
-      .play()
-      .then(() => {
-        playIcon.src = '../images/stop-button-svgrepo-com.svg'
-      })
-      .catch(() => {
-        // Autoplay blocked by browser — user needs to click play
-      })
-  }
 }
