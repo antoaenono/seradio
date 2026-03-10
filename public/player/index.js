@@ -28,7 +28,14 @@ function capitalizeFirst(text) {
 let audioCtx
 let analyser
 let sourceNode
+let visualizerGain
 let visualizerRunning = false
+let needsVisualizerSourceRefresh = true
+
+function syncVisualizerGain() {
+  if (!audioCtx || !visualizerGain) return
+  visualizerGain.gain.setValueAtTime(audio.volume, audioCtx.currentTime)
+}
 
 function syncCanvasResolution() {
   if (!canvas) return
@@ -46,8 +53,27 @@ function visualize() {
 
   const bufferLength = analyser.frequencyBinCount
   const dataArray = new Uint8Array(bufferLength)
+  const bars = 96
+
+  const nyquist = (audioCtx?.sampleRate || 44100) / 2
+  const minFreq = 40
+  const maxFreq = Math.min(12000, nyquist)
+  const barRanges = Array.from({ length: bars }, (_, i) => {
+    const startRatio = i / bars
+    const endRatio = (i + 1) / bars
+    const startFreq = minFreq * (maxFreq / minFreq) ** startRatio
+    const endFreq = minFreq * (maxFreq / minFreq) ** endRatio
+    const startIdx = Math.max(1, Math.floor((startFreq / nyquist) * bufferLength))
+    const endIdx = Math.max(startIdx + 1, Math.ceil((endFreq / nyquist) * bufferLength))
+    return [startIdx, Math.min(endIdx, bufferLength)] // end is exclusive
+  })
 
   function renderFrame() {
+    if (audio.paused) {
+      visualizerRunning = false
+      return
+    }
+
     requestAnimationFrame(renderFrame)
     analyser.getByteFrequencyData(dataArray)
 
@@ -57,15 +83,18 @@ function visualize() {
     const cy = height / 2
     const minSize = Math.min(width, height)
     const innerRadius = minSize * 0.23
-    const bars = 96
-    const step = Math.max(1, Math.floor(bufferLength / bars))
     const lineWidth = Math.max(2, minSize * 0.008)
 
     canvasCtx.clearRect(0, 0, width, height)
     canvasCtx.lineCap = 'round'
 
     for (let i = 0; i < bars; i += 1) {
-      const value = dataArray[i * step] / 255
+      const [startIdx, endIdx] = barRanges[i]
+      let peak = 0
+      for (let j = startIdx; j < endIdx; j += 1) {
+        peak = Math.max(peak, dataArray[j])
+      }
+      const value = peak / 255
       const angle = (i / bars) * Math.PI * 2 - Math.PI / 2
       const length = minSize * (0.035 + value * 0.14)
       const x1 = cx + Math.cos(angle) * innerRadius
@@ -108,10 +137,31 @@ async function initVisualizerFromGesture() {
 
     if (!analyser) {
       analyser = audioCtx.createAnalyser()
-      analyser.fftSize = 256
+      analyser.fftSize = 1024
+      analyser.smoothingTimeConstant = 0.8
+    }
+
+    if (!visualizerGain) {
+      visualizerGain = audioCtx.createGain()
+      visualizerGain.connect(analyser)
+      syncVisualizerGain()
+    }
+
+    if (typeof audio.captureStream === 'function') {
+      if (!sourceNode || needsVisualizerSourceRefresh) {
+        const stream = audio.captureStream()
+        if (sourceNode) {
+          sourceNode.disconnect()
+        }
+        sourceNode = audioCtx.createMediaStreamSource(stream)
+        sourceNode.connect(visualizerGain)
+        needsVisualizerSourceRefresh = false
+      }
+    } else if (!sourceNode) {
+      // Fallback path when captureStream is unavailable.
       sourceNode = audioCtx.createMediaElementSource(audio)
-      sourceNode.connect(analyser)
-      analyser.connect(audioCtx.destination)
+      sourceNode.connect(audioCtx.destination)
+      sourceNode.connect(visualizerGain)
     }
 
     if (audioCtx.state === 'suspended') {
@@ -143,31 +193,44 @@ navLinks.querySelectorAll('a').forEach((link) => {
 // Each play flushes stale buffers and fetches a fresh manifest from the live edge.
 // reloadSource is set per browser path; the click handler calls it before audio.play().
 let reloadSource = () => {}
+let stopLoading = () => {}
 
 // hls.js path (Chrome, Firefox, Edge)
 if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-  const hls = new Hls({ liveSyncDurationCount: 1 })
+  const hls = new Hls({
+    // Keep a small but safer distance from the live edge to avoid startup underruns.
+    liveSyncDurationCount: 3,
+    liveMaxLatencyDurationCount: 6,
+  })
   hls.attachMedia(audio)
+  let hasLoadedSource = false
 
-  // Stop fetching segments while paused to save bandwidth
-  audio.addEventListener('pause', () => hls.stopLoad())
-
+  // First play loads the manifest; subsequent resumes just continue loading.
   reloadSource = () => {
-    hls.loadSource('/api/audio/')
+    if (!hasLoadedSource) {
+      hls.loadSource('/api/audio/')
+      hasLoadedSource = true
+    }
     hls.startLoad(-1) // -1 = default start position (live edge)
   }
+  stopLoading = () => hls.stopLoad()
   // Safari native HLS
 } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+  let hasLoadedSource = false
   reloadSource = () => {
-    audio.src = '/api/audio/'
+    if (!hasLoadedSource) {
+      audio.src = '/api/audio/'
+      hasLoadedSource = true
+    }
   }
 }
 
 //Controls Player
-play.addEventListener('click', async () => {
+play.addEventListener('click', () => {
   if (audio.paused) {
     playIcon.src = '../images/stop-button-svgrepo-com.svg'
-    await initVisualizerFromGesture()
+    void initVisualizerFromGesture()
+    needsVisualizerSourceRefresh = true
     reloadSource()
     audio.play().catch(() => {
       playIcon.src = '../images/play-button-svgrepo-com.svg'
@@ -175,16 +238,18 @@ play.addEventListener('click', async () => {
   } else {
     playIcon.src = '../images/play-button-svgrepo-com.svg'
     audio.pause()
+    stopLoading()
   }
 })
 
-// Volume control
-volume.addEventListener('input', () => {
-  audio.volume = volume.value
+// Re-capture stream on each playback start; reloadSource can invalidate old stream tracks.
+audio.addEventListener('playing', () => {
+  void initVisualizerFromGesture()
 })
 
 volume.addEventListener('input', () => {
   audio.volume = volume.value
+  syncVisualizerGain()
   const percent = volume.value * 100
   volume.style.background = `linear-gradient(to right, #4CAF50 ${percent}%, #ddd ${percent}%)`
 })
@@ -224,6 +289,7 @@ if (window.seradioPrefs) {
   // Restore volume
   const savedVol = prefs.defaultVolume / 100
   audio.volume = savedVol
+  syncVisualizerGain()
   volume.value = savedVol
   const percent = savedVol * 100
   volume.style.background = `linear-gradient(to right, #4CAF50 ${percent}%, #ddd ${percent}%)`
