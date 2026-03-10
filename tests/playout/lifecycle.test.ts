@@ -7,6 +7,13 @@ import { _reset, init, nowPlaying, start } from '../../src/playout'
 logger.level = 'silent'
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+const waitFor = async (check: () => boolean, timeoutMs = 250): Promise<void> => {
+  const start = Date.now()
+  while (!check()) {
+    if (Date.now() - start >= timeoutMs) throw new Error('timed out waiting for condition')
+    await wait(1)
+  }
+}
 
 const fakeSilence = { file: 'silence.ts', duration: 0.001 }
 const fakeTone = [
@@ -137,8 +144,8 @@ describe('tick', () => {
     expect(nowPlaying()).toBe('first.mp3')
 
     // Wait for ticks to drain through track 1's segments + silence gap
-    // and trigger advance for track 2, then transition to it.
-    await wait(10)
+    // and transition to track 2. Fixed delays are flaky on Windows timer resolution.
+    await waitFor(() => nowPlaying() === 'second.mp3')
 
     expect(nowPlaying()).toBe('second.mp3')
   })
