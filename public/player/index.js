@@ -199,7 +199,7 @@ let stopLoading = () => {}
 if (typeof Hls !== 'undefined' && Hls.isSupported()) {
   const hls = new Hls({
     // Keep a small but safer distance from the live edge to avoid startup underruns.
-    liveSyncDurationCount: 3,
+    liveSyncDurationCount: 2,
     liveMaxLatencyDurationCount: 6,
   })
   hls.attachMedia(audio)
