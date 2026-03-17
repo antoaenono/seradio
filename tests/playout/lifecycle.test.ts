@@ -21,8 +21,8 @@ const fakeTone = [
   { file: 'tone_001.ts', duration: 0.001 },
 ]
 
-// Generate enough fake segments to stay above buffer threshold (360)
-const fakeTrackSegments = Array.from({ length: 400 }, (_, i) => ({
+// Generate enough fake segments to stay above buffer threshold (180)
+const fakeTrackSegments = Array.from({ length: 200 }, (_, i) => ({
   file: `t1_${String(i).padStart(3, '0')}.ts`,
   duration: 0.001,
 }))
@@ -169,7 +169,7 @@ describe('tick', () => {
     await start()
 
     // start() calls segmentTrack once (for advance). Buffer starts with 6 segments
-    // (3 track + 3 silence), well below the 360 threshold, so tick should
+    // (3 track + 3 silence), well below the 180 threshold, so tick should
     // trigger additional advance calls.
     const callsBefore = (deps.segmentTrack as ReturnType<typeof mock>).mock.calls.length
     await wait(10)
@@ -343,7 +343,7 @@ describe('nowPlaying', () => {
     _reset()
 
     // 3 short segments at the front, then enough padding to stay above
-    // the buffer threshold (360) so tick doesn't trigger runaway advances.
+    // the buffer threshold (180) so tick doesn't trigger runaway advances.
     // Tick drains the 3 short segments into the silence gap; nowPlaying
     // should still return the track path because silence shares the trackId.
     const shortSegments = Array.from({ length: 3 }, (_, i) => ({
