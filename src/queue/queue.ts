@@ -16,6 +16,22 @@ export function append(path: string): void {
 }
 
 /**
+ * Return a shallow copy of the current queue.
+ */
+export function list(): string[] {
+  return [...queue]
+}
+
+/**
+ * Remove the track at the given index from the queue.
+ * @returns The removed path, or undefined if the index is out of bounds.
+ */
+export function remove(index: number): string | undefined {
+  if (index < 0 || index >= queue.length) return undefined
+  return queue.splice(index, 1)[0]
+}
+
+/**
  * Get the next track path. Pops from the front, or calls the fallback if empty.
  */
 export async function next(): Promise<string> {

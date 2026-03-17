@@ -2,4 +2,4 @@
  * @module queue
  * Upcoming track list.
  */
-export { append, next } from './queue'
+export { append, list, next, remove } from './queue'
