@@ -1,64 +1,47 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SeRadio</title>
-    <link rel="stylesheet" href="index.css" />
-  </head>
-  <body>
-    <%~ it.navbar %>
+<header id="hero">
+  <div class="hero-content">
+    <h1>Welcome to SeRadio</h1>
+    <p class="hero-subtitle">
+      Your community radio station &mdash; Streaming live 24/7 <br />
+      . . . as long as we happen to be running our local server. <br />
+      . . . and you are on the same LAN.
+    </p>
+    <a href="/player/" class="hero-cta">Listen Now</a>
+  </div>
+</header>
 
-    <header id="hero">
-      <div class="hero-content">
-        <h1>Welcome to SeRadio</h1>
-        <p class="hero-subtitle">
-          Your community radio station &mdash; Streaming live 24/7 <br />
-          . . . as long as we happen to be running our local server. <br />
-          . . . and you are on the same LAN.
-        </p>
-        <a href="/player/" class="hero-cta">Listen Now</a>
-      </div>
-    </header>
+<main>
+  <section id="schedule">
+    <h2 class="section-title">Show Schedule</h2>
+    <div id="schedule-grid" class="schedule-grid">
+      <!-- Populated by index.js -->
+    </div>
+  </section>
+</main>
 
-    <main>
-      <section id="schedule">
-        <h2 class="section-title">Show Schedule</h2>
-        <div id="schedule-grid" class="schedule-grid">
-          <!-- Populated by index.js -->
-        </div>
-      </section>
-    </main>
-
-    <footer id="footer">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <h3>SeRadio</h3>
-          <p>Community-powered internet radio.</p>
-        </div>
-        <div class="footer-links">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="#hero">Home</a></li>
-            <li><a href="#schedule">Schedule</a></li>
-            <li><a href="/queue/">Queue</a></li>
-            <li><a href="/player/">Player</a></li>
-            <li><a href="/DJ/">DJ</a></li>
-            <li><a href="/admin/">Admin</a></li>
-          </ul>
-        </div>
-        <div class="footer-contact">
-          <h4>Contact</h4>
-          <p>do.not.contact.us@pdx.edu</p>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 SeRadio. Some rights possibly reserved.</p>
-      </div>
-    </footer>
-
-    <script src="/seradio-prefs.js"></script>
-    <script src="/schedule-store.js"></script>
-    <script src="index.js"></script>
-  </body>
-</html>
+<footer id="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <h3>SeRadio</h3>
+      <p>Community-powered internet radio.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#schedule">Schedule</a></li>
+        <li><a href="/queue/">Queue</a></li>
+        <li><a href="/player/">Player</a></li>
+        <li><a href="/DJ/">DJ</a></li>
+        <li><a href="/admin/">Admin</a></li>
+      </ul>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>do.not.contact.us@pdx.edu</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 SeRadio. Some rights possibly reserved.</p>
+  </div>
+</footer>

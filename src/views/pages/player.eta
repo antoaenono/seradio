@@ -1,48 +1,31 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SeRadio Player</title>
-    <link rel="stylesheet" href="index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
-  </head>
-  <body>
-    <%~ it.navbar %>
+<div id="container">
+  <div id="card">
+    <div id="card-title">SeRadio</div>
+    <audio id="player"></audio>
 
-    <div id="container">
-      <div id="card">
-        <div id="card-title">SeRadio</div>
-        <audio id="player"></audio>
+    <button id="play">
+      <img id="play-icon" src="../images/play-button-svgrepo-com.svg" alt="Play" />
+    </button>
+    <input type="range" id="volume" value="1" min="0" max="1" step="0.01" />
 
-        <button id="play">
-          <img id="play-icon" src="../images/play-button-svgrepo-com.svg" alt="Play" />
-        </button>
-        <input type="range" id="volume" value="1" min="0" max="1" step="0.01" />
+    <canvas id="visualizer"></canvas>
 
-        <canvas id="visualizer"></canvas>
-
-        <div id="below">
-          <div id="song-meta">
-            <p id="title"></p>
-            <p id="artist"></p>
-            <p id="album"></p>
-            <p id="year"></p>
-            <p id="genre"></p>
-          </div>
-
-          <ol id="history">
-            <p id="history1" class="history-title">History1</p>
-            <p id="history2" class="history-title">History2</p>
-            <p id="history3" class="history-title">History3</p>
-            <p id="history4" class="history-title">History4</p>
-            <p id="history5" class="history-title">History5</p>
-          </ol>
-        </div>
+    <div id="below">
+      <div id="song-meta">
+        <p id="title"></p>
+        <p id="artist"></p>
+        <p id="album"></p>
+        <p id="year"></p>
+        <p id="genre"></p>
       </div>
-    </div>
 
-    <script src="/seradio-prefs.js"></script>
-    <script src="index.js"></script>
-  </body>
-</html>
+      <ol id="history">
+        <p id="history1" class="history-title">History1</p>
+        <p id="history2" class="history-title">History2</p>
+        <p id="history3" class="history-title">History3</p>
+        <p id="history4" class="history-title">History4</p>
+        <p id="history5" class="history-title">History5</p>
+      </ol>
+    </div>
+  </div>
+</div>

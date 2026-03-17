@@ -1,48 +1,32 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SeRadio - Queue</title>
-    <link rel="stylesheet" href="index.css" />
-  </head>
-  <body>
-    <%~ it.navbar %>
+<main id="queue-main">
+  <h1 class="page-title">Queue</h1>
+  <p class="page-subtitle">Browse media files and manage the upcoming track queue.</p>
 
-    <main id="queue-main">
-      <h1 class="page-title">Queue</h1>
-      <p class="page-subtitle">Browse media files and manage the upcoming track queue.</p>
+  <section class="panel panel-history">
+    <h2 class="panel-title">History</h2>
+    <ul id="history-list" class="track-list">
+      <li class="empty-msg">No history yet</li>
+    </ul>
+  </section>
 
-      <section class="panel panel-history">
-        <h2 class="panel-title">History</h2>
-        <ul id="history-list" class="track-list">
-          <li class="empty-msg">No history yet</li>
-        </ul>
-      </section>
+  <section class="panel panel-queue">
+    <h2 class="panel-title">On Deck</h2>
+    <ul id="on-deck-list" class="track-list">
+      <li class="empty-msg">Nothing on deck</li>
+    </ul>
+  </section>
 
-      <section class="panel panel-queue">
-        <h2 class="panel-title">On Deck</h2>
-        <ul id="on-deck-list" class="track-list">
-          <li class="empty-msg">Nothing on deck</li>
-        </ul>
-      </section>
+  <section class="panel panel-queue">
+    <h2 class="panel-title">Queue</h2>
+    <ul id="queue-list" class="track-list">
+      <li class="empty-msg">Queue is empty</li>
+    </ul>
+  </section>
 
-      <section class="panel panel-queue">
-        <h2 class="panel-title">Queue</h2>
-        <ul id="queue-list" class="track-list">
-          <li class="empty-msg">Queue is empty</li>
-        </ul>
-      </section>
-
-      <section class="panel">
-        <h2 class="panel-title">Media Library</h2>
-        <ul id="media-list" class="track-list">
-          <li class="empty-msg">Loading...</li>
-        </ul>
-      </section>
-    </main>
-
-    <script src="/seradio-prefs.js"></script>
-    <script src="index.js"></script>
-  </body>
-</html>
+  <section class="panel">
+    <h2 class="panel-title">Media Library</h2>
+    <ul id="media-list" class="track-list">
+      <li class="empty-msg">Loading...</li>
+    </ul>
+  </section>
+</main>

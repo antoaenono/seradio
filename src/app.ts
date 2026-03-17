@@ -22,6 +22,14 @@ type NavPage = 'home' | 'queue' | 'player' | 'dj' | 'admin'
 
 const eta = new Eta()
 const viewsDir = path.join(import.meta.dirname, './views')
+const pageLayoutPath = path.join(viewsDir, 'layouts/page.eta')
+
+type PageConfig = {
+  title: string
+  stylesheetHref: string
+  scripts: string[]
+  headExtra?: string
+}
 
 const navItems: { key: NavPage; label: string; href: string }[] = [
   { key: 'home', label: 'Home', href: '/' },
@@ -48,11 +56,36 @@ function renderNavbar(activePage: NavPage): string {
   ].join('')
 }
 
-function renderPage(view: string, activePage: NavPage): express.RequestHandler {
-  return (req, res) => {
-    res.render(view, {
-      navbar: renderNavbar(activePage),
-    })
+function renderScripts(srcs: string[]): string {
+  return srcs.map((src) => `<script src="${src}"></script>`).join('\n    ')
+}
+
+function renderPage(
+  view: string,
+  activePage: NavPage,
+  pageConfig: PageConfig,
+): express.RequestHandler {
+  return (req, res, next) => {
+    try {
+      const pageTemplatePath = path.join(viewsDir, `${view}.eta`)
+      const pageTemplate = readFileSync(pageTemplatePath, 'utf-8')
+      const layoutTemplate = readFileSync(pageLayoutPath, 'utf-8')
+
+      const pageBody = eta.renderString(pageTemplate, {}) ?? ''
+      const rendered =
+        eta.renderString(layoutTemplate, {
+          title: pageConfig.title,
+          stylesheetHref: pageConfig.stylesheetHref,
+          headExtra: pageConfig.headExtra ?? '',
+          navbar: renderNavbar(activePage),
+          body: pageBody,
+          scripts: renderScripts(pageConfig.scripts),
+        }) ?? ''
+
+      res.send(rendered)
+    } catch (error) {
+      next(error)
+    }
   }
 }
 
@@ -106,15 +139,80 @@ app.engine('eta', (filePath, options, callback) => {
 app.set('view engine', 'eta')
 app.set('views', viewsDir)
 
-app.get('/', renderPage('pages/index', 'home'))
-app.get('/queue', renderPage('pages/queue', 'queue'))
-app.get('/queue/', renderPage('pages/queue', 'queue'))
-app.get('/player', renderPage('pages/player', 'player'))
-app.get('/player/', renderPage('pages/player', 'player'))
-app.get('/DJ', renderPage('pages/dj', 'dj'))
-app.get('/DJ/', renderPage('pages/dj', 'dj'))
-app.get('/admin', renderPage('pages/admin', 'admin'))
-app.get('/admin/', renderPage('pages/admin', 'admin'))
+app.get(
+  '/',
+  renderPage('pages/index', 'home', {
+    title: 'SeRadio',
+    stylesheetHref: 'index.css',
+    scripts: ['/seradio-prefs.js', '/schedule-store.js', 'index.js'],
+  }),
+)
+app.get(
+  '/queue',
+  renderPage('pages/queue', 'queue', {
+    title: 'SeRadio - Queue',
+    stylesheetHref: 'index.css',
+    scripts: ['/seradio-prefs.js', 'index.js'],
+  }),
+)
+app.get(
+  '/queue/',
+  renderPage('pages/queue', 'queue', {
+    title: 'SeRadio - Queue',
+    stylesheetHref: 'index.css',
+    scripts: ['/seradio-prefs.js', 'index.js'],
+  }),
+)
+app.get(
+  '/player',
+  renderPage('pages/player', 'player', {
+    title: 'SeRadio Player',
+    stylesheetHref: 'index.css',
+    headExtra: '<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>',
+    scripts: ['/seradio-prefs.js', 'index.js'],
+  }),
+)
+app.get(
+  '/player/',
+  renderPage('pages/player', 'player', {
+    title: 'SeRadio Player',
+    stylesheetHref: 'index.css',
+    headExtra: '<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>',
+    scripts: ['/seradio-prefs.js', 'index.js'],
+  }),
+)
+app.get(
+  '/DJ',
+  renderPage('pages/dj', 'dj', {
+    title: 'SeRadio &mdash; DJ',
+    stylesheetHref: 'index.css',
+    scripts: ['/seradio-prefs.js', '/schedule-store.js', 'index.js'],
+  }),
+)
+app.get(
+  '/DJ/',
+  renderPage('pages/dj', 'dj', {
+    title: 'SeRadio &mdash; DJ',
+    stylesheetHref: 'index.css',
+    scripts: ['/seradio-prefs.js', '/schedule-store.js', 'index.js'],
+  }),
+)
+app.get(
+  '/admin',
+  renderPage('pages/admin', 'admin', {
+    title: 'SeRadio &mdash; Admin',
+    stylesheetHref: 'index.css',
+    scripts: ['/seradio-prefs.js', 'index.js'],
+  }),
+)
+app.get(
+  '/admin/',
+  renderPage('pages/admin', 'admin', {
+    title: 'SeRadio &mdash; Admin',
+    stylesheetHref: 'index.css',
+    scripts: ['/seradio-prefs.js', 'index.js'],
+  }),
+)
 
 // 4. Serve static files from "public" dir
 app.use(express.static(path.join(import.meta.dirname, '../public')))
