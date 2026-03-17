@@ -115,29 +115,6 @@ ul {
   margin-bottom: 0.75rem;
 }
 
-/* DJ Card */
-#dj-card {
-  border-left: 4px solid #70d598;
-}
-
-.dj-show-name {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.dj-host-name {
-  font-size: 0.95rem;
-  color: #555;
-  margin-top: 0.15rem;
-}
-
-.dj-desc {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 0.4rem;
-}
-
 /* Player Card */
 #card {
   display: flex;
@@ -296,19 +273,6 @@ body.dark .panel {
 
 body.dark .panel-title {
   color: #70d598;
-}
-
-body.dark #dj-card {
-  border-left-color: #70d598;
-}
-
-body.dark .dj-show-name {
-  color: #e0e0e0;
-}
-
-body.dark .dj-host-name,
-body.dark .dj-desc {
-  color: #aaa;
 }
 
 body.dark #card-title {

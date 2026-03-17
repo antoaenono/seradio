@@ -1,18 +1,11 @@
 <% layout("layouts/page", {
   title: "SeRadio Player",
   active: "player",
-  head: '<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>\n    <link rel="stylesheet" href="/css/player.css" />\n    <script src="/js/schedule-store.js"></script>',
+  head: '<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>\n    <link rel="stylesheet" href="/css/player.css" />',
   scripts: '<script src="/js/player.js"></script>'
 }) %>
 
 <main id="player-main">
-  <section id="dj-card" class="panel" hidden>
-    <h2 class="panel-title">On Air</h2>
-    <p id="dj-show" class="dj-show-name"></p>
-    <p id="dj-host" class="dj-host-name"></p>
-    <p id="dj-desc" class="dj-desc"></p>
-  </section>
-
   <section id="card" class="panel">
     <div id="card-header">
       <div id="card-title">SeRadio</div>
