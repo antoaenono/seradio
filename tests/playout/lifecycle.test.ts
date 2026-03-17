@@ -2,7 +2,7 @@ import { describe, expect, mock, test } from 'bun:test'
 
 import { logger } from '../../src/logger'
 import type { PlayoutDeps } from '../../src/playout'
-import { _reset, init, nowPlaying, start } from '../../src/playout'
+import { _reset, history, init, nowPlaying, onDeck, start } from '../../src/playout'
 
 logger.level = 'silent'
 
@@ -370,5 +370,253 @@ describe('nowPlaying', () => {
 
     // Still the same track - silence segments share the trackId
     expect(nowPlaying()).toBe('silence-test.mp3')
+  })
+})
+
+describe('onDeck', () => {
+  test('should return empty when only one track is buffered', async () => {
+    _reset()
+    const deps = fakeDeps()
+    await init(() => Promise.resolve('only.mp3'), deps)
+    await start()
+
+    expect(onDeck()).toEqual([])
+  })
+
+  test('should return the next track when buffer has two tracks', async () => {
+    _reset()
+
+    // Small segments so the buffer stays below threshold and advance fires for a second track.
+    const smallSegments = Array.from({ length: 3 }, (_, i) => ({
+      file: `tx_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+
+    let callCount = 0
+    const tracks = ['first.mp3', 'second.mp3']
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => Promise.resolve(smallSegments)),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock(() => Promise.resolve()),
+    }
+
+    await init(() => {
+      const track = tracks[callCount] ?? tracks[tracks.length - 1]
+      callCount++
+      return Promise.resolve(track)
+    }, deps)
+
+    await start()
+    // Buffer is small, tick triggers advance for the second track
+    await wait(10)
+
+    expect(onDeck()).toContain('second.mp3')
+  })
+
+  test('should return multiple tracks when several small tracks are buffered', async () => {
+    _reset()
+
+    const smallSegments = Array.from({ length: 3 }, (_, i) => ({
+      file: `tx_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+
+    let callCount = 0
+    const tracks = ['first.mp3', 'second.mp3', 'third.mp3']
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => Promise.resolve(smallSegments)),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock(() => Promise.resolve()),
+    }
+
+    await init(() => {
+      const track = tracks[callCount] ?? tracks[tracks.length - 1]
+      callCount++
+      return Promise.resolve(track)
+    }, deps)
+
+    await start()
+    // Let multiple advances fire - small segments drain fast so several
+    // tracks get segmented. We just verify more than one is on deck.
+    await wait(20)
+
+    const deck = onDeck()
+    expect(deck.length).toBeGreaterThanOrEqual(2)
+  })
+
+  test('should return empty before start is called', async () => {
+    _reset()
+    const deps = fakeDeps()
+    await init(() => Promise.resolve('track.mp3'), deps)
+
+    expect(onDeck()).toEqual([])
+  })
+
+  test('on deck track should become nowPlaying after transition', async () => {
+    _reset()
+
+    const smallSegments = Array.from({ length: 3 }, (_, i) => ({
+      file: `tx_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+
+    let callCount = 0
+    const tracks = ['first.mp3', 'second.mp3']
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => Promise.resolve(smallSegments)),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock(() => Promise.resolve()),
+    }
+
+    await init(() => {
+      const track = tracks[callCount] ?? tracks[tracks.length - 1]
+      callCount++
+      return Promise.resolve(track)
+    }, deps)
+
+    await start()
+    expect(nowPlaying()).toBe('first.mp3')
+
+    // Wait for track transition
+    await waitFor(() => nowPlaying() === 'second.mp3')
+
+    expect(nowPlaying()).toBe('second.mp3')
+  })
+
+  test('should not include the currently playing track', async () => {
+    _reset()
+    const deps = fakeDeps()
+    await init(() => Promise.resolve('only.mp3'), deps)
+    await start()
+
+    expect(nowPlaying()).toBe('only.mp3')
+    expect(onDeck()).not.toContain('only.mp3')
+  })
+})
+
+describe('history', () => {
+  test('should return empty before any track plays', async () => {
+    _reset()
+
+    expect(await history(10)).toEqual([])
+  })
+
+  test('should record the first track on start', async () => {
+    _reset()
+    const deps = fakeDeps()
+    await init(() => Promise.resolve('first.mp3'), deps)
+    await start()
+
+    // Give the async appendFile a moment to flush
+    await wait(10)
+    const entries = await history(10)
+
+    expect(entries.length).toBeGreaterThanOrEqual(1)
+    expect(entries.some((e) => e.file.includes('first.mp3'))).toBe(true)
+    expect(entries[entries.length - 1].timestamp).toBeTruthy()
+  })
+
+  test('should record track transitions', async () => {
+    _reset()
+
+    const smallSegments = Array.from({ length: 3 }, (_, i) => ({
+      file: `tx_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+
+    let callCount = 0
+    const tracks = ['first.mp3', 'second.mp3']
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => Promise.resolve(smallSegments)),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock(() => Promise.resolve()),
+    }
+
+    await init(() => {
+      const track = tracks[callCount] ?? tracks[tracks.length - 1]
+      callCount++
+      return Promise.resolve(track)
+    }, deps)
+
+    await start()
+    await waitFor(() => nowPlaying() === 'second.mp3')
+    await wait(10)
+
+    const entries = await history(10)
+    expect(entries.length).toBeGreaterThanOrEqual(2)
+    expect(entries[0].file).toContain('first.mp3')
+    expect(entries[1].file).toContain('second.mp3')
+  })
+
+  test('should respect the n limit', async () => {
+    _reset()
+
+    const smallSegments = Array.from({ length: 3 }, (_, i) => ({
+      file: `tx_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+
+    let callCount = 0
+    const tracks = ['a.mp3', 'b.mp3', 'c.mp3']
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => Promise.resolve(smallSegments)),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock(() => Promise.resolve()),
+    }
+
+    await init(() => {
+      const track = tracks[callCount] ?? tracks[tracks.length - 1]
+      callCount++
+      return Promise.resolve(track)
+    }, deps)
+
+    await start()
+    await waitFor(() => nowPlaying() === 'c.mp3', 500)
+    await wait(10)
+
+    const last1 = await history(1)
+    expect(last1.length).toBe(1)
+    expect(last1[0].file).toContain('c.mp3')
+  })
+
+  test('should have timestamps in chronological order', async () => {
+    _reset()
+
+    const smallSegments = Array.from({ length: 3 }, (_, i) => ({
+      file: `tx_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+
+    let callCount = 0
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => Promise.resolve(smallSegments)),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock(() => Promise.resolve()),
+    }
+
+    await init(() => {
+      callCount++
+      return Promise.resolve(`track${callCount}.mp3`)
+    }, deps)
+
+    await start()
+    await wait(20)
+
+    const entries = await history(10)
+    for (let i = 1; i < entries.length; i++) {
+      expect(entries[i].timestamp >= entries[i - 1].timestamp).toBe(true)
+    }
   })
 })
