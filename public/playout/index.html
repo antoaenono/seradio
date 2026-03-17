@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SeRadio - Playout</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav id="navbar">
+      <div class="nav-brand"><a href="/">SeRadio</a></div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/player/">Player</a></li>
+        <li><a href="/playout/" class="active">Playout</a></li>
+        <li><a href="/admin/">Admin</a></li>
+      </ul>
+      <button id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+    </nav>
+
+    <main id="playout-main">
+      <h1 class="page-title">Playout</h1>
+      <p class="page-subtitle">Browse media files and manage the upcoming track queue.</p>
+
+      <!-- History -->
+      <section class="panel panel-history">
+        <h2 class="panel-title">History</h2>
+        <ul id="history-list" class="track-list">
+          <li class="empty-msg">No history yet</li>
+        </ul>
+      </section>
+
+      <!-- On deck -->
+      <section class="panel panel-queue">
+        <h2 class="panel-title">On Deck</h2>
+        <ul id="on-deck-list" class="track-list">
+          <li class="empty-msg">Nothing on deck</li>
+        </ul>
+      </section>
+
+      <!-- Queue -->
+      <section class="panel panel-queue">
+        <h2 class="panel-title">Queue</h2>
+        <ul id="queue-list" class="track-list">
+          <li class="empty-msg">Queue is empty</li>
+        </ul>
+      </section>
+
+      <!-- Media library -->
+      <section class="panel">
+        <h2 class="panel-title">Media Library</h2>
+        <ul id="media-list" class="track-list">
+          <li class="empty-msg">Loading...</li>
+        </ul>
+      </section>
+    </main>
+
+    <script src="/seradio-prefs.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
