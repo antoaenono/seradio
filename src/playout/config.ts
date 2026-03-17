@@ -7,6 +7,7 @@ import path from 'path'
 // Paths
 export const SEGMENT_DIR = path.join(import.meta.dirname, '../../media/segments')
 export const WINDOW_PATH = path.join(SEGMENT_DIR, 'playlist.m3u8')
+export const LOG_DIR = path.join(import.meta.dirname, '../../media/logs')
 
 // HLS
 export const SEGMENT_DURATION = 1
@@ -19,4 +20,4 @@ export const TONE_DURATION = 10 // seconds per sweep cycle
 // Buffer threshold inputs
 export const MAX_TRACK_DURATION = 3600 // seconds (1 hour, mirrors FCC hourly ID)
 export const FFMPEG_THROUGHPUT = 20 // audio seconds per wall-clock second (conservative)
-export const SAFETY_MARGIN = 2 // multiplier for jitter and I/O stalls
+export const SAFETY_MARGIN = 1 // multiplier for jitter and I/O stalls

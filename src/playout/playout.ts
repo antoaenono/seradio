@@ -3,13 +3,16 @@
  * HLS playout: manages a sliding window of segments and advances through
  * the buffer with silent gaps between tracks.
  */
-import { mkdir, rm, unlink, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, mkdtemp, readFile, rm, unlink, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 
 import path from 'path'
 
 import { logger } from '../logger'
+import { timestampFnSafe } from '../util'
 import {
   FFMPEG_THROUGHPUT,
+  LOG_DIR,
   MAX_TRACK_DURATION,
   SAFETY_MARGIN,
   SEGMENT_DIR,
@@ -59,6 +62,7 @@ let getNextTrack: () => Promise<string>
 const trackPaths = new Map<number, string>() // trackIndex -> mp3 path
 let currentTrackPath: string | undefined
 let tickTimer: ReturnType<typeof setTimeout> | undefined
+let logPath: string
 
 // Injectable dependencies for testing purposes (default to real implementations)
 let _segmentTrack = defaultSegmentTrack
@@ -87,6 +91,15 @@ export async function init(nextTrack: () => Promise<string>, deps?: PlayoutDeps)
   await rm(SEGMENT_DIR, { recursive: true, force: true })
   await mkdir(SEGMENT_DIR, { recursive: true })
 
+  // Set up the per-session playout log (tracks played and when)
+  if (deps) {
+    const tmpDir = await mkdtemp(path.join(tmpdir(), 'playout-'))
+    logPath = path.join(tmpDir, 'test.log')
+  } else {
+    await mkdir(LOG_DIR, { recursive: true })
+    logPath = path.join(LOG_DIR, `${timestampFnSafe()}.log`)
+  }
+
   silenceSegment = await _generateSilence(SEGMENT_DIR, SEGMENT_DURATION)
   toneSegments = await _generateTone(SEGMENT_DIR, SEGMENT_DURATION, TONE_DURATION)
 }
@@ -98,6 +111,7 @@ export async function start(): Promise<void> {
   stopped = false
   await advance()
   currentTrackPath = trackPaths.get(buffer[0]?.trackId)
+  if (currentTrackPath) logNowPlaying(currentTrackPath)
   await _writeWindow(buffer.slice(0, WINDOW_SIZE), segmentIndex)
   logger.info({ segments: buffer.length }, 'playout started')
 
@@ -154,6 +168,7 @@ async function tick(): Promise<void> {
   // Update now-playing when the track changes
   if (old && current && old.trackId !== current.trackId) {
     currentTrackPath = trackPaths.get(current.trackId)
+    if (currentTrackPath) logNowPlaying(currentTrackPath)
     trackPaths.delete(old.trackId)
   }
 
@@ -187,6 +202,56 @@ async function tick(): Promise<void> {
 /** Returns the mp3 path of the currently playing track, or undefined during fallback tone. */
 export function nowPlaying(): string | undefined {
   return currentTrackPath
+}
+
+/**
+ * Walk the segment buffer and collect the mp3 paths of every track that
+ * has already been segmented but has not yet started playing.
+ *
+ * These tracks are committed to the playout and cannot be removed or
+ * reordered. The list is ordered by play position (the track that will
+ * play next is first).
+ *
+ * Returns an empty array when only the current track is in the buffer
+ * or when the buffer is empty (before start).
+ */
+export function onDeck(): string[] {
+  const currentId = buffer[0]?.trackId
+  const seen = new Set<number>()
+  if (currentId !== undefined) seen.add(currentId)
+  const paths: string[] = []
+  for (const seg of buffer) {
+    if (seen.has(seg.trackId)) continue
+    seen.add(seg.trackId)
+    const p = trackPaths.get(seg.trackId)
+    if (p) paths.push(p)
+  }
+  return paths
+}
+
+/**
+ * Read the per-session playout log and return the last `n` entries.
+ *
+ * Each entry records the wall-clock time a track actually began playing
+ * (not when it was segmented). The log is a TSV file written to
+ * `media/logs/<session-timestamp>.log`; a new file is created on every
+ * server startup so sessions are easy to distinguish.
+ *
+ * @param n - Maximum number of entries to return (most recent last).
+ * @returns Entries with ISO timestamp and the full mp3 path.
+ *          Returns an empty array when the log does not exist yet.
+ */
+export async function history(n: number): Promise<{ timestamp: string; file: string }[]> {
+  try {
+    const content = await readFile(logPath, 'utf-8')
+    const lines = content.trim().split('\n').filter(Boolean)
+    return lines.slice(-n).map((line) => {
+      const [timestamp, ...rest] = line.split('\t')
+      return { timestamp, file: rest.join('\t') }
+    })
+  } catch {
+    return []
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -247,6 +312,17 @@ async function writeWindow(segments: Segment[], sequence: number): Promise<void>
   await writeFile(WINDOW_PATH, buildWindow(segments, sequence))
 }
 
+/**
+ * Append a tab-separated line to the session log recording when a track
+ * started playing. Called from start() for the first track and from
+ * tick() on every track transition. Errors are swallowed so a log
+ * failure never interrupts the playout.
+ * @param mp3 - Absolute path to the mp3 file that just started playing.
+ */
+function logNowPlaying(mp3: string): void {
+  appendFile(logPath, `${new Date().toISOString()}\t${mp3}\n`).catch(() => {})
+}
+
 /** Arrange silence segments for a gap after a track.
  * Intended to pass the same ID as the preceding track so we can easily identify them together.
  * @param trackId - The track ID to assign to the silence segments
@@ -273,4 +349,5 @@ export function _reset(): void {
   trackPaths.clear()
   currentTrackPath = undefined
   isAdvancing = false
+  logPath = ''
 }
