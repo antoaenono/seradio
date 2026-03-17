@@ -14,13 +14,16 @@ import * as queue from '../../queue'
 
 const AUDIO_DIR = path.join(import.meta.dirname, '../../../media')
 
+/** Extract just the filename from an absolute path. */
+const _basename = (p: string): string => p.split('/').pop() ?? p
+
 export const queueRouter = Router()
 
 /** GET /api/playout/on-deck - tracks already segmented, can't change. */
 queueRouter.get('/on-deck', (req, res) => {
   const deck = onDeck()
   res.json({
-    onDeck: deck.map((p) => p.split('/').pop() ?? p),
+    onDeck: deck.map((p) => _basename(p)),
   })
 })
 
@@ -30,7 +33,7 @@ queueRouter.get('/history', async (req, res, next) => {
     const entries = await history(n)
     const items = entries.map((e) => ({
       timestamp: e.timestamp,
-      file: e.file.split('/').pop() ?? e.file,
+      file: _basename(e.file),
     }))
     res.json({ history: items })
   } catch (error) {
@@ -52,7 +55,7 @@ queueRouter.get('/media', async (req, res, next) => {
 /** GET /api/playout/queue - return the current queue as filenames. */
 queueRouter.get('/queue', (req, res) => {
   const paths = queue.list()
-  const items = paths.map((p) => p.split('/').pop() ?? p)
+  const items = paths.map((p) => _basename(p))
   res.json({ queue: items })
 })
 
@@ -85,7 +88,7 @@ queueRouter.delete('/queue/:index', (req, res) => {
     res.status(404).json({ error: 'index out of range' })
     return
   }
-  const file = removed.split('/').pop()
+  const file = _basename(removed)
   logger.info({ index, file }, 'track removed from queue')
   res.json({ ok: true, removed: file })
 })
