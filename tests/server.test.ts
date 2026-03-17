@@ -32,9 +32,53 @@ describe('Server', () => {
     expect(await resp.json()).toEqual({ status: 'ok' })
   })
 
-  test('unknown route returns 404', async () => {
-    const resp = await fetch(`${baseUrl}/nonexistent`)
-    expect(resp.status).toBe(404)
-    expect(await resp.json()).toEqual({ error: 'Not found' })
+  describe('page routes', () => {
+    test('GET / returns 200 with text/html', async () => {
+      const resp = await fetch(`${baseUrl}/`)
+      expect(resp.status).toBe(200)
+      expect(resp.headers.get('content-type')).toContain('text/html')
+    })
+
+    test('GET /player returns 200 with text/html', async () => {
+      const resp = await fetch(`${baseUrl}/player`)
+      expect(resp.status).toBe(200)
+      expect(resp.headers.get('content-type')).toContain('text/html')
+    })
+
+    test('GET /dj returns 200 with text/html', async () => {
+      const resp = await fetch(`${baseUrl}/dj`)
+      expect(resp.status).toBe(200)
+      expect(resp.headers.get('content-type')).toContain('text/html')
+    })
+
+    test('GET /queue returns 200 with text/html', async () => {
+      const resp = await fetch(`${baseUrl}/queue`)
+      expect(resp.status).toBe(200)
+      expect(resp.headers.get('content-type')).toContain('text/html')
+    })
+
+    test('GET /admin returns 200 with text/html', async () => {
+      const resp = await fetch(`${baseUrl}/admin`)
+      expect(resp.status).toBe(200)
+      expect(resp.headers.get('content-type')).toContain('text/html')
+    })
+  })
+
+  describe('404 handling', () => {
+    test('GET /nonexistent with Accept: application/json returns 404 JSON', async () => {
+      const resp = await fetch(`${baseUrl}/nonexistent`, {
+        headers: { Accept: 'application/json' },
+      })
+      expect(resp.status).toBe(404)
+      expect(await resp.json()).toEqual({ error: 'Not found' })
+    })
+
+    test('GET /nonexistent with Accept: text/html returns 404 HTML', async () => {
+      const resp = await fetch(`${baseUrl}/nonexistent`, {
+        headers: { Accept: 'text/html' },
+      })
+      expect(resp.status).toBe(404)
+      expect(resp.headers.get('content-type')).toContain('text/html')
+    })
   })
 })

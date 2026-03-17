@@ -1,0 +1,39 @@
+<% layout("layouts/page", {
+  title: "SeRadio - Queue",
+  active: "queue",
+  head: '<link rel="stylesheet" href="/css/queue.css" />',
+  scripts: '<script src="/js/queue.js"></script>'
+}) %>
+
+<main id="queue-main">
+  <h1 class="page-title">Queue</h1>
+  <p class="page-subtitle">Browse media files and manage the upcoming track queue.</p>
+
+  <section class="panel panel-history">
+    <h2 class="panel-title">History</h2>
+    <ul id="history-list" class="track-list">
+      <li class="empty-msg">No history yet</li>
+    </ul>
+  </section>
+
+  <section class="panel panel-queue">
+    <h2 class="panel-title">On Deck</h2>
+    <ul id="on-deck-list" class="track-list">
+      <li class="empty-msg">Nothing on deck</li>
+    </ul>
+  </section>
+
+  <section class="panel panel-queue">
+    <h2 class="panel-title">Queue</h2>
+    <ul id="queue-list" class="track-list">
+      <li class="empty-msg">Queue is empty</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel-title">Media Library</h2>
+    <ul id="media-list" class="track-list">
+      <li class="empty-msg">Loading...</li>
+    </ul>
+  </section>
+</main>

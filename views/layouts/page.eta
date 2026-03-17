@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <title><%= it.title %></title>
+    <%~ it.head %>
+  </head>
+  <body>
+    <%~ include("/partials/navbar", { active: it.active }) %>
+    <%~ it.body %>
+    <script src="/js/seradio-prefs.js"></script>
+    <script src="/js/nav.js"></script>
+    <%~ it.scripts %>
+  </body>
+</html>
