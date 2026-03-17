@@ -191,21 +191,6 @@ resetBtn.addEventListener('click', () => {
   toast('Settings reset to defaults')
 })
 
-// Mobile nav toggle
-
-const navToggle = document.getElementById('nav-toggle')
-const navLinks = document.querySelector('.nav-links')
-
-navToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('open')
-})
-
-navLinks.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('open')
-  })
-})
-
 // Init
 
 const settings = loadSettings()

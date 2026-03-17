@@ -2,8 +2,6 @@
 /* global Hls */
 
 // DOM elements
-const navToggle = document.getElementById('nav-toggle')
-const navLinks = document.querySelector('.nav-links')
 const details = document.querySelectorAll('#song-meta p')
 const audio = document.getElementById('player')
 const play = document.getElementById('play')
@@ -178,17 +176,6 @@ window.addEventListener('resize', () => {
   syncCanvasResolution()
 })
 
-//Mobile Nav Toggle
-navToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('open')
-})
-
-navLinks.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('open')
-  })
-})
-
 // HLS playback
 // Each play flushes stale buffers and fetches a fresh manifest from the live edge.
 // reloadSource is set per browser path; the click handler calls it before audio.play().
@@ -228,15 +215,15 @@ if (typeof Hls !== 'undefined' && Hls.isSupported()) {
 //Controls Player
 play.addEventListener('click', () => {
   if (audio.paused) {
-    playIcon.src = '../images/stop-button-svgrepo-com.svg'
+    playIcon.src = '/images/stop-button-svgrepo-com.svg'
     void initVisualizerFromGesture()
     needsVisualizerSourceRefresh = true
     reloadSource()
     audio.play().catch(() => {
-      playIcon.src = '../images/play-button-svgrepo-com.svg'
+      playIcon.src = '/images/play-button-svgrepo-com.svg'
     })
   } else {
-    playIcon.src = '../images/play-button-svgrepo-com.svg'
+    playIcon.src = '/images/play-button-svgrepo-com.svg'
     audio.pause()
     stopLoading()
   }

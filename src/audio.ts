@@ -1,3 +1,8 @@
+/**
+ * @module audio
+ * This module provides functions for handling audio files, including reading metadata and selecting random MP3 files.
+ */
+
 import { readdir } from 'node:fs/promises'
 
 import { parseFile } from 'music-metadata'

@@ -1,0 +1,53 @@
+<% layout("layouts/page", {
+  title: "SeRadio",
+  active: "home",
+  head: '<link rel="stylesheet" href="/css/index.css" />',
+  scripts: '<script src="/js/schedule-store.js"></script>\n    <script src="/js/index.js"></script>'
+}) %>
+
+<header id="hero">
+  <div class="hero-content">
+    <h1>Welcome to SeRadio</h1>
+    <p class="hero-subtitle">
+      Your community radio station - Streaming live 24/7 <br />
+      . . . as long as we happen to be running our local server. <br />
+      . . . and you are on the same LAN.
+    </p>
+    <a href="/player" class="hero-cta">Listen Now</a>
+  </div>
+</header>
+
+<main>
+  <section id="schedule">
+    <h2 class="section-title">Show Schedule</h2>
+    <div id="schedule-grid" class="schedule-grid">
+      <!-- Populated by index.js -->
+    </div>
+  </section>
+</main>
+
+<footer id="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <h3>SeRadio</h3>
+      <p>Community-powered internet radio.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/queue">Queue</a></li>
+        <li><a href="/player">Player</a></li>
+        <li><a href="/dj">DJ</a></li>
+        <li><a href="/admin">Admin</a></li>
+      </ul>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <p>do.not.contact.us@pdx.edu</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 SeRadio. Some rights possibly reserved.</p>
+  </div>
+</footer>

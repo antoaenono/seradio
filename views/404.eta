@@ -1,0 +1,12 @@
+<% layout("layouts/page", {
+  title: "SeRadio - Not Found",
+  active: "",
+  head: "",
+  scripts: ""
+}) %>
+
+<main class="not-found-page">
+  <h1>Page not found</h1>
+  <p>Sorry, we couldn&rsquo;t find the page you&rsquo;re looking for.</p>
+  <a href="/">Back to Home</a>
+</main>

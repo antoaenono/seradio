@@ -1,0 +1,100 @@
+<% layout("layouts/page", {
+  title: "SeRadio - Admin",
+  active: "admin",
+  head: '<link rel="stylesheet" href="/css/admin.css" />',
+  scripts: '<script src="/js/admin.js"></script>'
+}) %>
+
+<main id="admin-main">
+  <h1 class="page-title">Settings</h1>
+  <p class="page-subtitle">Personalize your SeRadio experience. Changes are saved automatically.</p>
+
+  <section class="settings-group">
+    <h2 class="group-title">Appearance</h2>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <label for="dark-mode">Dark Mode</label>
+        <p class="setting-desc">Switch between light and dark themes.</p>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="dark-mode" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <label for="accent-color">Accent Color</label>
+        <p class="setting-desc">Choose the highlight color used across the site.</p>
+      </div>
+      <input type="color" id="accent-color" value="#70d598" />
+    </div>
+  </section>
+
+  <section class="settings-group">
+    <h2 class="group-title">Playback</h2>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <label for="default-volume">Default Volume</label>
+        <p class="setting-desc">Set the volume the player starts at.</p>
+      </div>
+      <div class="range-wrap">
+        <input type="range" id="default-volume" min="0" max="100" value="80" />
+        <span id="volume-label" class="range-value">80%</span>
+      </div>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <label for="autoplay">Autoplay on Load</label>
+        <p class="setting-desc">Automatically start playing when you open the player page.</p>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="autoplay" />
+        <span class="slider"></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="settings-group">
+    <h2 class="group-title">Genre Preferences</h2>
+    <p class="group-desc">Select the genres you enjoy. This helps tailor your schedule view.</p>
+
+    <div class="genre-grid" id="genre-grid">
+      <!-- Populated by admin.js -->
+    </div>
+  </section>
+
+  <section class="settings-group">
+    <h2 class="group-title">Profile</h2>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <label for="display-name">Display Name</label>
+        <p class="setting-desc">Shown in chat and listener lists (when available).</p>
+      </div>
+      <input type="text" id="display-name" placeholder="Listener" maxlength="24" />
+    </div>
+  </section>
+
+  <section class="settings-group">
+    <h2 class="group-title">Notifications</h2>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <label for="show-notifications">Show Alerts</label>
+        <p class="setting-desc">Get a browser notification when a new show starts.</p>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="show-notifications" />
+        <span class="slider"></span>
+      </label>
+    </div>
+  </section>
+
+  <section class="settings-actions">
+    <button id="reset-btn" class="btn btn-danger">Reset to Defaults</button>
+  </section>
+</main>
