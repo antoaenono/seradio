@@ -3,7 +3,8 @@
  * HLS playout: manages a sliding window of segments and advances through
  * the buffer with silent gaps between tracks.
  */
-import { appendFile, mkdir, readFile, rm, unlink, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, mkdtemp, readFile, rm, unlink, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 
 import path from 'path'
 
@@ -89,8 +90,15 @@ export async function init(nextTrack: () => Promise<string>, deps?: PlayoutDeps)
 
   await rm(SEGMENT_DIR, { recursive: true, force: true })
   await mkdir(SEGMENT_DIR, { recursive: true })
-  await mkdir(LOG_DIR, { recursive: true })
-  logPath = path.join(LOG_DIR, `${timestampFnSafe()}.log`)
+
+  if (deps) {
+    // Tests: write to OS temp dir so we don't pollute the project
+    const tmpDir = await mkdtemp(path.join(tmpdir(), 'playout-'))
+    logPath = path.join(tmpDir, 'test.log')
+  } else {
+    await mkdir(LOG_DIR, { recursive: true })
+    logPath = path.join(LOG_DIR, `${timestampFnSafe()}.log`)
+  }
 
   silenceSegment = await _generateSilence(SEGMENT_DIR, SEGMENT_DURATION)
   toneSegments = await _generateTone(SEGMENT_DIR, SEGMENT_DURATION, TONE_DURATION)
