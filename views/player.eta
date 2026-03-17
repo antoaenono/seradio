@@ -1,13 +1,23 @@
 <% layout("layouts/page", {
   title: "SeRadio Player",
   active: "player",
-  head: '<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>\n    <link rel="stylesheet" href="/css/player.css" />',
+  head: '<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>\n    <link rel="stylesheet" href="/css/player.css" />\n    <script src="/js/schedule-store.js"></script>',
   scripts: '<script src="/js/player.js"></script>'
 }) %>
 
-<div id="container">
-  <div id="card">
-    <div id="card-title">SeRadio</div>
+<main id="player-main">
+  <section id="dj-card" class="panel" hidden>
+    <h2 class="panel-title">On Air</h2>
+    <p id="dj-show" class="dj-show-name"></p>
+    <p id="dj-host" class="dj-host-name"></p>
+    <p id="dj-desc" class="dj-desc"></p>
+  </section>
+
+  <section id="card" class="panel">
+    <div id="card-header">
+      <div id="card-title">SeRadio</div>
+      <span id="listener-name" class="listener-name"></span>
+    </div>
     <audio id="player"></audio>
 
     <button id="play">
@@ -17,22 +27,19 @@
 
     <canvas id="visualizer"></canvas>
 
-    <div id="below">
-      <div id="song-meta">
-        <p id="title"></p>
-        <p id="artist"></p>
-        <p id="album"></p>
-        <p id="year"></p>
-        <p id="genre"></p>
-      </div>
-
-      <ol id="history">
-        <p id="history1" class="history-title">History1</p>
-        <p id="history2" class="history-title">History2</p>
-        <p id="history3" class="history-title">History3</p>
-        <p id="history4" class="history-title">History4</p>
-        <p id="history5" class="history-title">History5</p>
-      </ol>
+    <div id="song-meta">
+      <p id="title"></p>
+      <p id="artist"></p>
+      <p id="album"></p>
+      <p id="year"></p>
+      <p id="genre"></p>
     </div>
-  </div>
-</div>
+  </section>
+
+  <section id="history-panel" class="panel">
+    <h2 class="panel-title">History</h2>
+    <ul id="history-list" class="track-list">
+      <li class="empty-msg">No history yet</li>
+    </ul>
+  </section>
+</main>

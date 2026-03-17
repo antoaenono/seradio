@@ -59,7 +59,6 @@ const darkModeEl = document.getElementById('dark-mode')
 const accentColorEl = document.getElementById('accent-color')
 const defaultVolumeEl = document.getElementById('default-volume')
 const volumeLabelEl = document.getElementById('volume-label')
-const autoplayEl = document.getElementById('autoplay')
 const displayNameEl = document.getElementById('display-name')
 const showNotificationsEl = document.getElementById('show-notifications')
 const genreGridEl = document.getElementById('genre-grid')
@@ -95,9 +94,6 @@ function applySettings(settings) {
   // Volume
   defaultVolumeEl.value = settings.defaultVolume
   volumeLabelEl.textContent = settings.defaultVolume + '%'
-
-  // Autoplay
-  autoplayEl.checked = settings.autoplay
 
   // Display name
   displayNameEl.value = settings.displayName
@@ -136,7 +132,6 @@ function collectSettings() {
     darkMode: darkModeEl.checked,
     accentColor: accentColorEl.value,
     defaultVolume: Number(defaultVolumeEl.value),
-    autoplay: autoplayEl.checked,
     genres: selectedGenres,
     displayName: displayNameEl.value.trim(),
     showNotifications: showNotificationsEl.checked,
@@ -164,8 +159,6 @@ defaultVolumeEl.addEventListener('input', () => {
   volumeLabelEl.textContent = defaultVolumeEl.value + '%'
   persistAll()
 })
-
-autoplayEl.addEventListener('change', persistAll)
 
 displayNameEl.addEventListener('input', persistAll)
 

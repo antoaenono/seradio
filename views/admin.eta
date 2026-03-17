@@ -46,16 +46,7 @@
       </div>
     </div>
 
-    <div class="setting-row">
-      <div class="setting-info">
-        <label for="autoplay">Autoplay on Load</label>
-        <p class="setting-desc">Automatically start playing when you open the player page.</p>
-      </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="autoplay" />
-        <span class="slider"></span>
-      </label>
-    </div>
+
   </section>
 
   <section class="settings-group">
