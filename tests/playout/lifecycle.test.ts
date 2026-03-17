@@ -620,3 +620,166 @@ describe('history', () => {
     }
   })
 })
+
+describe('full playback fidelity', () => {
+  test('tracks should play all segments before transitioning', async () => {
+    _reset()
+
+    // Track A has 5 segments, Track B has 3 segments.
+    // Each track should play all its segments + 3 silence before the next starts.
+    // We observe this via writeWindow calls: the first segment's trackId tells us
+    // which track is playing, and we count how many windows each trackId appears in.
+    const trackASegments = Array.from({ length: 5 }, (_, i) => ({
+      file: `tA_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+    const trackBSegments = Array.from({ length: 3 }, (_, i) => ({
+      file: `tB_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+
+    let callCount = 0
+    const segmentSets = [trackASegments, trackBSegments]
+    const tracks = ['a.mp3', 'b.mp3']
+
+    const windowCalls: { trackId: number }[] = []
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => {
+        const segs = segmentSets[callCount] ?? segmentSets[segmentSets.length - 1]
+        callCount++
+        return Promise.resolve(segs)
+      }),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock((segments) => {
+        if (segments.length > 0) windowCalls.push({ trackId: segments[0].trackId })
+        return Promise.resolve()
+      }),
+    }
+
+    await init(() => {
+      const t = tracks[callCount - 1] ?? tracks[tracks.length - 1]
+      return Promise.resolve(t)
+    }, deps)
+
+    await start()
+    // Wait for both tracks to drain through
+    await waitFor(() => callCount >= 2 && windowCalls.length > 10, 500)
+    await wait(20)
+
+    // Count consecutive windows per trackId
+    const runs: { trackId: number; count: number }[] = []
+    for (const call of windowCalls) {
+      const last = runs[runs.length - 1]
+      if (last && last.trackId === call.trackId) {
+        last.count++
+      } else {
+        runs.push({ trackId: call.trackId, count: 1 })
+      }
+    }
+
+    // Track A (trackId 1) should have at least 5 + 3 = 8 windows (segments + silence)
+    const trackARun = runs.find((r) => r.trackId === 1)
+    expect(trackARun).toBeDefined()
+    expect(trackARun!.count).toBeGreaterThanOrEqual(5 + 3)
+
+    // Track B (trackId 2) should have at least 3 + 3 = 6 windows
+    const trackBRun = runs.find((r) => r.trackId === 2)
+    expect(trackBRun).toBeDefined()
+    expect(trackBRun!.count).toBeGreaterThanOrEqual(3 + 3)
+  })
+
+  test('play order should match queue order', async () => {
+    _reset()
+
+    const smallSegments = Array.from({ length: 3 }, (_, i) => ({
+      file: `tx_${String(i).padStart(3, '0')}.ts`,
+      duration: 0.001,
+    }))
+
+    let callCount = 0
+    const tracks = ['first.mp3', 'second.mp3', 'third.mp3']
+    const playOrder: string[] = []
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => Promise.resolve(smallSegments)),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock(() => Promise.resolve()),
+    }
+
+    await init(() => {
+      const track = tracks[callCount] ?? tracks[tracks.length - 1]
+      callCount++
+      return Promise.resolve(track)
+    }, deps)
+
+    await start()
+    playOrder.push(nowPlaying()!)
+
+    // Wait for transitions and record each new track
+    await waitFor(() => {
+      const current = nowPlaying()
+      if (current && current !== playOrder[playOrder.length - 1]) {
+        playOrder.push(current)
+      }
+      return playOrder.length >= 3
+    }, 500)
+
+    expect(playOrder).toEqual(['first.mp3', 'second.mp3', 'third.mp3'])
+  })
+
+  test('tracks of different lengths should each play fully', async () => {
+    _reset()
+
+    // Simulate tracks of very different sizes
+    const shortTrack = Array.from({ length: 2 }, (_, i) => ({
+      file: `short_${i}.ts`,
+      duration: 0.001,
+    }))
+    const longTrack = Array.from({ length: 10 }, (_, i) => ({
+      file: `long_${i}.ts`,
+      duration: 0.001,
+    }))
+
+    let trackCallCount = 0
+    let segCallCount = 0
+    const segmentSets = [shortTrack, longTrack]
+    const tracks = ['short.mp3', 'long.mp3']
+    const transitions: { from: string; to: string }[] = []
+    let lastPlaying: string | undefined
+
+    const deps: PlayoutDeps = {
+      segmentTrack: mock(() => {
+        const segs = segmentSets[segCallCount] ?? segmentSets[segmentSets.length - 1]
+        segCallCount++
+        return Promise.resolve(segs)
+      }),
+      generateSilence: mock(() => Promise.resolve(fakeSilence)),
+      generateTone: mock(() => Promise.resolve(fakeTone)),
+      writeWindow: mock(() => Promise.resolve()),
+    }
+
+    await init(() => {
+      const t = tracks[trackCallCount] ?? tracks[tracks.length - 1]
+      trackCallCount++
+      return Promise.resolve(t)
+    }, deps)
+
+    await start()
+    lastPlaying = nowPlaying()
+
+    await waitFor(() => {
+      const current = nowPlaying()
+      if (current && current !== lastPlaying) {
+        transitions.push({ from: lastPlaying!, to: current })
+        lastPlaying = current
+      }
+      return transitions.length >= 1
+    }, 500)
+
+    // The short track should transition to the long track
+    expect(transitions[0]).toEqual({ from: 'short.mp3', to: 'long.mp3' })
+  })
+})
