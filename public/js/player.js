@@ -262,6 +262,7 @@ async function loadMetadata() {
 
   if (!meta.error) {
     displayMetadata(meta)
+    currentMeta = meta
   }
 }
 
@@ -269,11 +270,9 @@ async function loadMetadata() {
 loadMetadata()
 setInterval(loadMetadata, 1000)
 
-// Volume and autoplay preference js created with help from Github Copilot
-// Apply saved preferences
+// Volume preference
 if (window.seradioPrefs) {
   const prefs = window.seradioPrefs
-  // Restore volume
   const savedVol = prefs.defaultVolume / 100
   audio.volume = savedVol
   syncVisualizerGain()
@@ -281,3 +280,70 @@ if (window.seradioPrefs) {
   const percent = savedVol * 100
   volume.style.background = `linear-gradient(to right, #4CAF50 ${percent}%, #ddd ${percent}%)`
 }
+
+// History
+const historyListEl = document.getElementById('history-list')
+let currentMeta = null
+
+function renderHistory(items) {
+  const atBottom =
+    historyListEl.scrollTop + historyListEl.clientHeight >= historyListEl.scrollHeight - 4
+  historyListEl.innerHTML = ''
+
+  // Show the currently playing song as the first entry
+  if (currentMeta && !isMissing(currentMeta.title)) {
+    const li = document.createElement('li')
+    li.className = 'track-item now-playing'
+
+    const name = document.createElement('span')
+    name.className = 'track-name'
+    name.textContent =
+      currentMeta.title + (isMissing(currentMeta.artist) ? '' : ' - ' + currentMeta.artist)
+    name.title = name.textContent
+
+    const badge = document.createElement('span')
+    badge.className = 'now-playing-badge'
+    badge.textContent = 'NOW'
+
+    li.appendChild(name)
+    li.appendChild(badge)
+    historyListEl.appendChild(li)
+  }
+
+  if (items.length === 0 && !currentMeta) {
+    historyListEl.innerHTML = '<li class="empty-msg">No history yet</li>'
+    return
+  }
+
+  for (const entry of items) {
+    const li = document.createElement('li')
+    li.className = 'track-item'
+
+    const time = document.createElement('span')
+    time.className = 'track-time'
+    time.textContent = new Date(entry.timestamp).toLocaleTimeString()
+
+    const name = document.createElement('span')
+    name.className = 'track-name'
+    name.textContent = entry.file
+    name.title = entry.file
+
+    li.appendChild(time)
+    li.appendChild(name)
+    historyListEl.appendChild(li)
+  }
+  if (atBottom) historyListEl.scrollTop = historyListEl.scrollHeight
+}
+
+async function fetchHistory() {
+  try {
+    const res = await fetch('/api/queue/history?n=50')
+    const data = await res.json()
+    renderHistory((data.history || []).reverse())
+  } catch {
+    historyListEl.innerHTML = '<li class="empty-msg">Failed to load history</li>'
+  }
+}
+
+fetchHistory()
+setInterval(fetchHistory, 3000)

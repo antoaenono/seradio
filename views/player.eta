@@ -5,34 +5,35 @@
   scripts: '<script src="/js/player.js"></script>'
 }) %>
 
-<div id="container">
-  <div id="card">
-    <div id="card-title">SeRadio</div>
-    <audio id="player"></audio>
+<main id="player-main">
+  <h1 class="page-title">Player</h1>
+  <p class="page-subtitle">Listen live and see what's been playing.</p>
 
-    <button id="play">
-      <img id="play-icon" src="/images/play-button-svgrepo-com.svg" alt="Play" />
-    </button>
-    <input type="range" id="volume" value="1" min="0" max="1" step="0.01" />
+  <section id="card" class="panel">
+    <audio id="player"></audio>
 
     <canvas id="visualizer"></canvas>
 
-    <div id="below">
-      <div id="song-meta">
-        <p id="title"></p>
-        <p id="artist"></p>
-        <p id="album"></p>
-        <p id="year"></p>
-        <p id="genre"></p>
-      </div>
-
-      <ol id="history">
-        <p id="history1" class="history-title">History1</p>
-        <p id="history2" class="history-title">History2</p>
-        <p id="history3" class="history-title">History3</p>
-        <p id="history4" class="history-title">History4</p>
-        <p id="history5" class="history-title">History5</p>
-      </ol>
+    <div id="player-controls">
+      <button id="play">
+        <img id="play-icon" src="/images/play-button-svgrepo-com.svg" alt="Play" />
+      </button>
+      <input type="range" id="volume" value="1" min="0" max="1" step="0.01" />
     </div>
-  </div>
-</div>
+
+    <div id="song-meta">
+      <p id="title"></p>
+      <p id="artist"></p>
+      <p id="album"></p>
+      <p id="year"></p>
+      <p id="genre"></p>
+    </div>
+  </section>
+
+  <section id="history-panel" class="panel panel-history">
+    <h2 class="panel-title">History</h2>
+    <ul id="history-list" class="track-list">
+      <li class="empty-msg">No history yet</li>
+    </ul>
+  </section>
+</main>
