@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SeRadio &mdash; DJ</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <nav id="navbar">
+      <div class="nav-brand"><a href="/">SeRadio</a></div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/player/">Player</a></li>
+        <li><a href="/DJ/" class="active">DJ</a></li>
+        <li><a href="/admin/">Admin</a></li>
+      </ul>
+      <button id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+    </nav>
+
+    <main id="dj-main">
+      <section class="page-header">
+        <div>
+          <p class="eyebrow">Schedule Control</p>
+          <h1 class="page-title">DJ schedule desk</h1>
+          <p class="page-subtitle">
+            Add, update, and remove shows for the landing page grid. Changes stay in the browser
+            only and do not touch the backend.
+          </p>
+        </div>
+        <div class="header-actions">
+          <button id="reset-btn" class="btn btn-secondary" type="button">Restore defaults</button>
+        </div>
+      </section>
+
+      <section class="dj-layout">
+        <section class="panel editor-panel">
+          <div class="panel-heading">
+            <h2 id="form-title">Add a show</h2>
+            <p>Fill in the details below, then publish it to the homepage schedule.</p>
+          </div>
+
+          <form id="show-form" class="show-form">
+            <input type="hidden" id="show-id" />
+
+            <label class="field">
+              <span>Day</span>
+              <select id="show-day" required>
+                <option value="">Select a day</option>
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Time</span>
+              <input id="show-time" type="text" placeholder="8:00 AM - 10:00 AM" required />
+            </label>
+
+            <label class="field">
+              <span>Show name</span>
+              <input id="show-name" type="text" placeholder="Late Night Vinyl" required />
+            </label>
+
+            <label class="field">
+              <span>Host</span>
+              <input id="show-host" type="text" placeholder="DJ Example" required />
+            </label>
+
+            <label class="field">
+              <span>Description</span>
+              <textarea
+                id="show-desc"
+                rows="5"
+                placeholder="Tell listeners what this slot is about."
+                required
+              ></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button id="submit-btn" class="btn btn-primary" type="submit">Add show</button>
+              <button id="cancel-btn" class="btn btn-ghost" type="button" hidden>
+                Cancel edit
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel schedule-panel">
+          <div class="panel-heading">
+            <h2>Current lineup</h2>
+            <p id="schedule-count">0 shows</p>
+          </div>
+
+          <div id="schedule-list" class="schedule-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="/seradio-prefs.js"></script>
+    <script src="/schedule-store.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>

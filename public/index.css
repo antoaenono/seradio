@@ -196,6 +196,16 @@ ul {
   line-height: 1.5;
 }
 
+.schedule-empty {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  text-align: center;
+  color: #555;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
 /* Footer */
 #footer {
   background: #08351f;
@@ -324,6 +334,12 @@ body.dark .schedule-card .show-host {
 
 body.dark .schedule-card .show-desc {
   color: #bbb;
+}
+
+body.dark .schedule-empty {
+  background: #1e1e1e;
+  color: #bbb;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 body.dark #footer {
