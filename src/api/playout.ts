@@ -16,8 +16,8 @@ const AUDIO_DIR = path.join(import.meta.dirname, '../../media')
 
 export const playoutRouter = Router()
 
-/** GET /api/playout/status - on deck tracks (already segmented, can't change). */
-playoutRouter.get('/status', (req, res) => {
+/** GET /api/playout/on-deck - tracks already segmented, can't change. */
+playoutRouter.get('/on-deck', (req, res) => {
   const deck = onDeck()
   res.json({
     onDeck: deck.map((p) => p.split('/').pop() ?? p),

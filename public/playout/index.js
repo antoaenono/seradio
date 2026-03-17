@@ -94,9 +94,9 @@ function renderQueue(items) {
 
 // API calls
 
-async function fetchStatus() {
+async function fetchOnDeck() {
   try {
-    const res = await fetch('/api/playout/status')
+    const res = await fetch('/api/playout/on-deck')
     const data = await res.json()
     renderOnDeck(data.onDeck || [])
   } catch {
@@ -195,13 +195,13 @@ navLinks.querySelectorAll('a').forEach((link) => {
 
 // Init
 
-fetchStatus()
+fetchOnDeck()
 fetchHistory()
 fetchMedia()
 fetchQueue()
 
 // No server-push mechanism, so we poll to detect tracks that start playing
 // or get consumed from the queue without user action on this page.
-setInterval(fetchStatus, 3000)
+setInterval(fetchOnDeck, 3000)
 setInterval(fetchHistory, 3000)
 setInterval(fetchQueue, 3000)
