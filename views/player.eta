@@ -1,4 +1,4 @@
-<% layout("layout", {
+<% layout("layouts/page", {
   title: "SeRadio Player",
   active: "player",
   head: '<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>\n    <link rel="stylesheet" href="/css/player.css" />',

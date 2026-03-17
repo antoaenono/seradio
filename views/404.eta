@@ -1,5 +1,5 @@
-<% layout("layout", {
-  title: "SeRadio &mdash; Not Found",
+<% layout("layouts/page", {
+  title: "SeRadio - Not Found",
   active: "",
   head: "",
   scripts: ""

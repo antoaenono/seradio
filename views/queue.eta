@@ -1,4 +1,4 @@
-<% layout("layout", {
+<% layout("layouts/page", {
   title: "SeRadio - Queue",
   active: "queue",
   head: '<link rel="stylesheet" href="/css/queue.css" />',

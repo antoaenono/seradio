@@ -1,3 +1,8 @@
+/**
+ * @module pages
+ * This module defines the routes for the different pages of the application.
+ */
+
 import { Router } from 'express'
 
 const router = Router()

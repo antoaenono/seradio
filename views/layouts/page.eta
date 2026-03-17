@@ -7,7 +7,7 @@
     <%~ it.head %>
   </head>
   <body>
-    <%~ include("partials/navbar", { active: it.active }) %>
+    <%~ include("/partials/navbar", { active: it.active }) %>
     <%~ it.body %>
     <script src="/js/seradio-prefs.js"></script>
     <script src="/js/nav.js"></script>

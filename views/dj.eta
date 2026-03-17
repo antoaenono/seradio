@@ -1,5 +1,5 @@
-<% layout("layout", {
-  title: "SeRadio &mdash; DJ",
+<% layout("layouts/page", {
+  title: "SeRadio - DJ",
   active: "dj",
   head: '<link rel="stylesheet" href="/css/dj.css" />',
   scripts: '<script src="/js/schedule-store.js"></script>\n    <script src="/js/dj.js"></script>'

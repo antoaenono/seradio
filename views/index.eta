@@ -1,4 +1,4 @@
-<% layout("layout", {
+<% layout("layouts/page", {
   title: "SeRadio",
   active: "home",
   head: '<link rel="stylesheet" href="/css/index.css" />',
@@ -9,7 +9,7 @@
   <div class="hero-content">
     <h1>Welcome to SeRadio</h1>
     <p class="hero-subtitle">
-      Your community radio station &mdash; Streaming live 24/7 <br />
+      Your community radio station - Streaming live 24/7 <br />
       . . . as long as we happen to be running our local server. <br />
       . . . and you are on the same LAN.
     </p>
