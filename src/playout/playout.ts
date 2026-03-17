@@ -91,8 +91,8 @@ export async function init(nextTrack: () => Promise<string>, deps?: PlayoutDeps)
   await rm(SEGMENT_DIR, { recursive: true, force: true })
   await mkdir(SEGMENT_DIR, { recursive: true })
 
+  // Set up the per-session playout log (tracks played and when)
   if (deps) {
-    // Tests: write to OS temp dir so we don't pollute the project
     const tmpDir = await mkdtemp(path.join(tmpdir(), 'playout-'))
     logPath = path.join(tmpDir, 'test.log')
   } else {

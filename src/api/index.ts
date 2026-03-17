@@ -8,10 +8,10 @@ import { Router } from 'express'
 
 import { audioRouter } from './audio'
 import { healthRouter } from './health'
-import { playoutRouter } from './playout'
+import { queueApiRouter } from './queue'
 
 export const apiRouter = Router()
 
 apiRouter.use(audioRouter)
 apiRouter.use(healthRouter)
-apiRouter.use('/playout', playoutRouter)
+apiRouter.use(queueApiRouter)

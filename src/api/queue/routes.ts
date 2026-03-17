@@ -1,33 +1,32 @@
 /**
- * @module api/playout
- * Queue management and media listing for the playout page.
+ * @module api/queue
+ * Queue management, on-deck status, history, and media listing for the playout page.
  */
 import { readdir } from 'node:fs/promises'
 
 import { Router } from 'express'
 import path from 'path'
 
-import { isMp3File } from '../audio'
-import { logger } from '../logger'
-import { history, onDeck } from '../playout'
-import * as queue from '../queue'
+import { isMp3File } from '../../audio'
+import { logger } from '../../logger'
+import { history, onDeck } from '../../playout'
+import * as queue from '../../queue'
 
-const AUDIO_DIR = path.join(import.meta.dirname, '../../media')
+const AUDIO_DIR = path.join(import.meta.dirname, '../../../media')
 
-export const playoutRouter = Router()
+export const queueRouter = Router()
 
 /** GET /api/playout/on-deck - tracks already segmented, can't change. */
-playoutRouter.get('/on-deck', (req, res) => {
+queueRouter.get('/on-deck', (req, res) => {
   const deck = onDeck()
   res.json({
     onDeck: deck.map((p) => p.split('/').pop() ?? p),
   })
 })
 
-/** GET /api/playout/history - last N played tracks (default 2). */
-playoutRouter.get('/history', async (req, res, next) => {
+queueRouter.get('/history', async (req, res, next) => {
   try {
-    const n = Math.max(1, Number(req.query.n) || 2)
+    const n = Number(req.query.n) || 1
     const entries = await history(n)
     const items = entries.map((e) => ({
       timestamp: e.timestamp,
@@ -40,7 +39,7 @@ playoutRouter.get('/history', async (req, res, next) => {
 })
 
 /** GET /api/playout/media - list available mp3 files. */
-playoutRouter.get('/media', async (req, res, next) => {
+queueRouter.get('/media', async (req, res, next) => {
   try {
     const files = await readdir(AUDIO_DIR)
     const mp3s = files.filter(isMp3File).sort((a, b) => a.localeCompare(b))
@@ -50,15 +49,15 @@ playoutRouter.get('/media', async (req, res, next) => {
   }
 })
 
-/** GET /api/playout/schedule - return the current queue as filenames. */
-playoutRouter.get('/schedule', (req, res) => {
+/** GET /api/playout/queue - return the current queue as filenames. */
+queueRouter.get('/queue', (req, res) => {
   const paths = queue.list()
   const items = paths.map((p) => p.split('/').pop() ?? p)
-  res.json({ schedule: items })
+  res.json({ queue: items })
 })
 
-/** POST /api/playout/schedule - append a track by filename. Body: { file: "song.mp3" } */
-playoutRouter.post('/schedule', (req, res) => {
+/** POST /api/playout/queue - append a track by filename. Body: { file: "song.mp3" } */
+queueRouter.post('/queue', (req, res) => {
   const { file } = req.body ?? {}
   if (!file || typeof file !== 'string' || !isMp3File(file)) {
     logger.warn({ file }, 'queue append rejected, invalid file')
@@ -71,8 +70,8 @@ playoutRouter.post('/schedule', (req, res) => {
   res.json({ ok: true })
 })
 
-/** DELETE /api/playout/schedule/:index - remove a track by queue position. */
-playoutRouter.delete('/schedule/:index', (req, res) => {
+/** DELETE /api/playout/queue/:index - remove a track by queue position. */
+queueRouter.delete('/queue/:index', (req, res) => {
   const index = Number(req.params.index)
   if (!Number.isInteger(index) || index < 0) {
     logger.warn({ index: req.params.index }, 'queue remove rejected, bad index')

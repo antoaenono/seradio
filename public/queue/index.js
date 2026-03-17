@@ -35,6 +35,26 @@ function renderHistory(items) {
   if (atBottom) historyListEl.scrollTop = historyListEl.scrollHeight
 }
 
+function renderOnDeck(items) {
+  onDeckListEl.innerHTML = ''
+  if (items.length === 0) {
+    onDeckListEl.innerHTML = '<li class="empty-msg">Nothing on deck</li>'
+    return
+  }
+  for (const file of items) {
+    const li = document.createElement('li')
+    li.className = 'track-item'
+
+    const name = document.createElement('span')
+    name.className = 'track-name'
+    name.textContent = file
+    name.title = file
+
+    li.appendChild(name)
+    onDeckListEl.appendChild(li)
+  }
+}
+
 function renderMedia(files) {
   mediaListEl.innerHTML = ''
   if (files.length === 0) {
@@ -96,7 +116,7 @@ function renderQueue(items) {
 
 async function fetchOnDeck() {
   try {
-    const res = await fetch('/api/playout/on-deck')
+    const res = await fetch('/api/queue/on-deck')
     const data = await res.json()
     renderOnDeck(data.onDeck || [])
   } catch {
@@ -104,29 +124,9 @@ async function fetchOnDeck() {
   }
 }
 
-function renderOnDeck(items) {
-  onDeckListEl.innerHTML = ''
-  if (items.length === 0) {
-    onDeckListEl.innerHTML = '<li class="empty-msg">Nothing on deck</li>'
-    return
-  }
-  for (const file of items) {
-    const li = document.createElement('li')
-    li.className = 'track-item'
-
-    const name = document.createElement('span')
-    name.className = 'track-name'
-    name.textContent = file
-    name.title = file
-
-    li.appendChild(name)
-    onDeckListEl.appendChild(li)
-  }
-}
-
 async function fetchHistory() {
   try {
-    const res = await fetch('/api/playout/history?n=100')
+    const res = await fetch('/api/queue/history?n=100')
     const data = await res.json()
     renderHistory(data.history || [])
   } catch {
@@ -136,7 +136,7 @@ async function fetchHistory() {
 
 async function fetchMedia() {
   try {
-    const res = await fetch('/api/playout/media')
+    const res = await fetch('/api/queue/media')
     const data = await res.json()
     renderMedia(data.files || [])
   } catch {
@@ -146,9 +146,9 @@ async function fetchMedia() {
 
 async function fetchQueue() {
   try {
-    const res = await fetch('/api/playout/schedule')
+    const res = await fetch('/api/queue/queue')
     const data = await res.json()
-    renderQueue(data.schedule || [])
+    renderQueue(data.queue || [])
   } catch {
     queueListEl.innerHTML = '<li class="empty-msg">Failed to load queue</li>'
   }
@@ -156,7 +156,7 @@ async function fetchQueue() {
 
 async function addToQueue(file) {
   try {
-    const res = await fetch('/api/playout/schedule', {
+    const res = await fetch('/api/queue/queue', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ file }),
@@ -164,17 +164,17 @@ async function addToQueue(file) {
     if (!res.ok) return
     fetchQueue()
   } catch {
-    // ignore
+    // nothing to update if request failed
   }
 }
 
 async function removeFromQueue(index) {
   try {
-    const res = await fetch('/api/playout/schedule/' + index, { method: 'DELETE' })
+    const res = await fetch('/api/queue/queue/' + index, { method: 'DELETE' })
     if (!res.ok) return
     fetchQueue()
   } catch {
-    // ignore
+    // nothing to update if request failed
   }
 }
 
