@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@rse/ffmpeg": "^1.4.2",
+    "eta": "^4.5.1",
     "express": "^5.0.0",
     "music-metadata": "^11.12.0",
     "pino": "^10.3.0",

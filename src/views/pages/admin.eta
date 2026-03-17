@@ -7,19 +7,7 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <!-- Admin Page HTML created with help from Github Copilot -->
-    <!-- Navigation Bar -->
-    <nav id="navbar">
-      <div class="nav-brand"><a href="/">SeRadio</a></div>
-      <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/player/">Player</a></li>
-        <li><a href="/DJ/">DJ</a></li>
-        <li><a href="/queue/">Queue</a></li>
-        <li><a href="/admin/" class="active">Admin</a></li>
-      </ul>
-      <button id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
-    </nav>
+    <%~ it.navbar %>
 
     <main id="admin-main">
       <h1 class="page-title">Settings</h1>
@@ -27,7 +15,6 @@
         Personalize your SeRadio experience. Changes are saved automatically.
       </p>
 
-      <!-- Appearance -->
       <section class="settings-group">
         <h2 class="group-title">Appearance</h2>
 
@@ -51,7 +38,6 @@
         </div>
       </section>
 
-      <!-- Playback -->
       <section class="settings-group">
         <h2 class="group-title">Playback</h2>
 
@@ -78,8 +64,6 @@
         </div>
       </section>
 
-      <!-- Placeholder for future implementation -->
-      <!-- Genre Preferences -->
       <section class="settings-group">
         <h2 class="group-title">Genre Preferences</h2>
         <p class="group-desc">Select the genres you enjoy. This helps tailor your schedule view.</p>
@@ -89,8 +73,6 @@
         </div>
       </section>
 
-      <!-- Placeholder for future implementation -->
-      <!-- Profile / Display -->
       <section class="settings-group">
         <h2 class="group-title">Profile</h2>
 
@@ -103,8 +85,6 @@
         </div>
       </section>
 
-      <!-- Placeholder for future implementation -->
-      <!-- Notifications -->
       <section class="settings-group">
         <h2 class="group-title">Notifications</h2>
 
@@ -120,7 +100,6 @@
         </div>
       </section>
 
-      <!-- Actions -->
       <section class="settings-actions">
         <button id="reset-btn" class="btn btn-danger">Reset to Defaults</button>
       </section>

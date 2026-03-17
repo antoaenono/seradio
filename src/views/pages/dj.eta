@@ -7,16 +7,7 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <nav id="navbar">
-      <div class="nav-brand"><a href="/">SeRadio</a></div>
-      <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/player/">Player</a></li>
-        <li><a href="/DJ/" class="active">DJ</a></li>
-        <li><a href="/admin/">Admin</a></li>
-      </ul>
-      <button id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
-    </nav>
+    <%~ it.navbar %>
 
     <main id="dj-main">
       <section class="page-header">

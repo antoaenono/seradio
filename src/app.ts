@@ -3,6 +3,9 @@
  * Express application setup: logging, static files, API routes, and 404 handling.
  * Imported by server.ts to start listening and by tests directly.
  */
+import { readFileSync } from 'node:fs'
+
+import { Eta } from 'eta'
 import express from 'express'
 import path from 'path'
 import pinoHttp from 'pino-http'
@@ -14,6 +17,44 @@ import * as queue from './queue'
 import { isDev } from './util'
 
 export const app = express()
+
+type NavPage = 'home' | 'queue' | 'player' | 'dj' | 'admin'
+
+const eta = new Eta()
+const viewsDir = path.join(import.meta.dirname, './views')
+
+const navItems: { key: NavPage; label: string; href: string }[] = [
+  { key: 'home', label: 'Home', href: '/' },
+  { key: 'queue', label: 'Queue', href: '/queue/' },
+  { key: 'player', label: 'Player', href: '/player/' },
+  { key: 'dj', label: 'DJ', href: '/DJ/' },
+  { key: 'admin', label: 'Admin', href: '/admin/' },
+]
+
+function renderNavbar(activePage: NavPage): string {
+  const links = navItems
+    .map((item) => {
+      const activeClass = item.key === activePage ? ' class="active"' : ''
+      return `<li><a href="${item.href}"${activeClass}>${item.label}</a></li>`
+    })
+    .join('')
+
+  return [
+    '<nav id="navbar">',
+    '<div class="nav-brand"><a href="/">SeRadio</a></div>',
+    `<ul class="nav-links">${links}</ul>`,
+    '<button id="nav-toggle" aria-label="Toggle navigation">&#9776;</button>',
+    '</nav>',
+  ].join('')
+}
+
+function renderPage(view: string, activePage: NavPage): express.RequestHandler {
+  return (req, res) => {
+    res.render(view, {
+      navbar: renderNavbar(activePage),
+    })
+  }
+}
 
 /**
  * Wire up the queue and playout, then start the tick loop.
@@ -51,13 +92,37 @@ app.use(
 // 2. Parse JSON bodies (without this, req.body is undefined)
 app.use(express.json())
 
-// 3. Serve static files from "public" dir
+// 3. Template engine + page routes
+app.engine('eta', (filePath, options, callback) => {
+  try {
+    const template = readFileSync(filePath, 'utf-8')
+    const rendered = eta.renderString(template, options)
+    callback(null, rendered)
+  } catch (error) {
+    callback(error as Error)
+  }
+})
+
+app.set('view engine', 'eta')
+app.set('views', viewsDir)
+
+app.get('/', renderPage('pages/index', 'home'))
+app.get('/queue', renderPage('pages/queue', 'queue'))
+app.get('/queue/', renderPage('pages/queue', 'queue'))
+app.get('/player', renderPage('pages/player', 'player'))
+app.get('/player/', renderPage('pages/player', 'player'))
+app.get('/DJ', renderPage('pages/dj', 'dj'))
+app.get('/DJ/', renderPage('pages/dj', 'dj'))
+app.get('/admin', renderPage('pages/admin', 'admin'))
+app.get('/admin/', renderPage('pages/admin', 'admin'))
+
+// 4. Serve static files from "public" dir
 app.use(express.static(path.join(import.meta.dirname, '../public')))
 
-// 4. Mount API routes
+// 5. Mount API routes
 app.use('/api', apiRouter)
 
-// 5. App-level 404 (after routes)
+// 6. App-level 404 (after routes)
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' })
 })
