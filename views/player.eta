@@ -1,10 +1,17 @@
+<% layout("layout", {
+  title: "SeRadio Player",
+  active: "player",
+  head: '<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>\n    <link rel="stylesheet" href="/css/player.css" />',
+  scripts: '<script src="/js/player.js"></script>'
+}) %>
+
 <div id="container">
   <div id="card">
     <div id="card-title">SeRadio</div>
     <audio id="player"></audio>
 
     <button id="play">
-      <img id="play-icon" src="../images/play-button-svgrepo-com.svg" alt="Play" />
+      <img id="play-icon" src="/images/play-button-svgrepo-com.svg" alt="Play" />
     </button>
     <input type="range" id="volume" value="1" min="0" max="1" step="0.01" />
 

@@ -1,3 +1,10 @@
+<% layout("layout", {
+  title: "SeRadio - Queue",
+  active: "queue",
+  head: '<link rel="stylesheet" href="/css/queue.css" />',
+  scripts: '<script src="/js/queue.js"></script>'
+}) %>
+
 <main id="queue-main">
   <h1 class="page-title">Queue</h1>
   <p class="page-subtitle">Browse media files and manage the upcoming track queue.</p>

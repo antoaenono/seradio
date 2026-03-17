@@ -4,12 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= it.title %></title>
-    <link rel="stylesheet" href="<%= it.stylesheetHref %>" />
-    <%~ it.headExtra %>
+    <%~ it.head %>
   </head>
   <body>
-    <%~ it.navbar %>
+    <%~ include("partials/navbar", { active: it.active }) %>
     <%~ it.body %>
+    <script src="/js/seradio-prefs.js"></script>
+    <script src="/js/nav.js"></script>
     <%~ it.scripts %>
   </body>
 </html>

@@ -1,3 +1,10 @@
+<% layout("layout", {
+  title: "SeRadio &mdash; DJ",
+  active: "dj",
+  head: '<link rel="stylesheet" href="/css/dj.css" />',
+  scripts: '<script src="/js/schedule-store.js"></script>\n    <script src="/js/dj.js"></script>'
+}) %>
+
 <main id="dj-main">
   <section class="page-header">
     <div>

@@ -1,3 +1,10 @@
+<% layout("layout", {
+  title: "SeRadio &mdash; Admin",
+  active: "admin",
+  head: '<link rel="stylesheet" href="/css/admin.css" />',
+  scripts: '<script src="/js/admin.js"></script>'
+}) %>
+
 <main id="admin-main">
   <h1 class="page-title">Settings</h1>
   <p class="page-subtitle">Personalize your SeRadio experience. Changes are saved automatically.</p>
@@ -56,7 +63,7 @@
     <p class="group-desc">Select the genres you enjoy. This helps tailor your schedule view.</p>
 
     <div class="genre-grid" id="genre-grid">
-      <!-- Populated by /public/admin/index.js -->
+      <!-- Populated by admin.js -->
     </div>
   </section>
 

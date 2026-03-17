@@ -1,3 +1,10 @@
+<% layout("layout", {
+  title: "SeRadio",
+  active: "home",
+  head: '<link rel="stylesheet" href="/css/index.css" />',
+  scripts: '<script src="/js/schedule-store.js"></script>\n    <script src="/js/index.js"></script>'
+}) %>
+
 <header id="hero">
   <div class="hero-content">
     <h1>Welcome to SeRadio</h1>
@@ -6,7 +13,7 @@
       . . . as long as we happen to be running our local server. <br />
       . . . and you are on the same LAN.
     </p>
-    <a href="/player/" class="hero-cta">Listen Now</a>
+    <a href="/player" class="hero-cta">Listen Now</a>
   </div>
 </header>
 
@@ -28,12 +35,11 @@
     <div class="footer-links">
       <h4>Quick Links</h4>
       <ul>
-        <li><a href="#hero">Home</a></li>
-        <li><a href="#schedule">Schedule</a></li>
-        <li><a href="/queue/">Queue</a></li>
-        <li><a href="/player/">Player</a></li>
-        <li><a href="/DJ/">DJ</a></li>
-        <li><a href="/admin/">Admin</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/queue">Queue</a></li>
+        <li><a href="/player">Player</a></li>
+        <li><a href="/dj">DJ</a></li>
+        <li><a href="/admin">Admin</a></li>
       </ul>
     </div>
     <div class="footer-contact">
