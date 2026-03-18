@@ -257,12 +257,16 @@ function displayMetadata(meta) {
 }
 
 async function loadMetadata() {
-  const res = await fetch('/api/audio/metadata')
-  const meta = await res.json()
+  try {
+    const res = await fetch('/api/audio/metadata')
+    const meta = await res.json()
 
-  if (!meta.error) {
-    displayMetadata(meta)
-    currentMeta = meta
+    if (!meta.error) {
+      displayMetadata(meta)
+      currentMeta = meta
+    }
+  } catch {
+    // Network errors are expected when server is restarting
   }
 }
 
