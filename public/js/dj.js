@@ -20,6 +20,12 @@ const scheduleCount = document.getElementById('schedule-count')
 let editingId = null
 let toastEl = null
 
+function escapeHtml(str) {
+  const el = document.createElement('span')
+  el.textContent = str
+  return el.innerHTML
+}
+
 function slugify(value) {
   return value
     .toLowerCase()
@@ -102,16 +108,16 @@ function renderSchedule(schedule) {
       item.innerHTML = `
         <div class="schedule-meta">
           <div>
-            <p class="show-day">${show.day}</p>
-            <p class="show-name">${show.name}</p>
+            <p class="show-day">${escapeHtml(show.day)}</p>
+            <p class="show-name">${escapeHtml(show.name)}</p>
           </div>
-          <p class="show-time">${show.time}</p>
+          <p class="show-time">${escapeHtml(show.time)}</p>
         </div>
-        <p class="show-host">Hosted by ${show.host}</p>
-        <p class="show-desc">${show.desc}</p>
+        <p class="show-host">Hosted by ${escapeHtml(show.host)}</p>
+        <p class="show-desc">${escapeHtml(show.desc)}</p>
         <div class="item-actions">
-          <button class="action-link" type="button" data-action="edit" data-id="${show.id}">Edit</button>
-          <button class="action-link delete" type="button" data-action="delete" data-id="${show.id}">Remove</button>
+          <button class="action-link" type="button" data-action="edit" data-id="${escapeHtml(show.id)}">Edit</button>
+          <button class="action-link delete" type="button" data-action="delete" data-id="${escapeHtml(show.id)}">Remove</button>
         </div>
       `
       scheduleList.appendChild(item)

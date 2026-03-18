@@ -13,7 +13,7 @@ metadataRouter.get('/', async (req, res, next) => {
   try {
     const filePath = nowPlaying()
     if (!filePath) {
-      res.json({ error: 'No track currently playing' })
+      res.status(404).json({ error: 'No track currently playing' })
       return
     }
     const data = await parseMp3MetadataToJson(filePath)

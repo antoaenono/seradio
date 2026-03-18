@@ -1,6 +1,6 @@
 /**
  * @module api/queue
- * Mounts queue API routes under /playout prefix.
+ * Mounts queue API routes under /queue prefix.
  */
 import { Router } from 'express'
 

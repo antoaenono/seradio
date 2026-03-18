@@ -19,7 +19,7 @@ const _basename = (p: string): string => p.split('/').pop() ?? p
 
 export const queueRouter = Router()
 
-/** GET /api/playout/on-deck - tracks already segmented, can't change. */
+/** GET /api/queue/on-deck - tracks already segmented, can't change. */
 queueRouter.get('/on-deck', (req, res) => {
   const deck = onDeck()
   res.json({
@@ -41,7 +41,7 @@ queueRouter.get('/history', async (req, res, next) => {
   }
 })
 
-/** GET /api/playout/media - list available mp3 files. */
+/** GET /api/queue/media - list available mp3 files. */
 queueRouter.get('/media', async (req, res, next) => {
   try {
     const files = await readdir(AUDIO_DIR)
@@ -52,14 +52,14 @@ queueRouter.get('/media', async (req, res, next) => {
   }
 })
 
-/** GET /api/playout/queue - return the current queue as filenames. */
+/** GET /api/queue/queue - return the current queue as filenames. */
 queueRouter.get('/queue', (req, res) => {
   const paths = queue.list()
   const items = paths.map((p) => _basename(p))
   res.json({ queue: items })
 })
 
-/** POST /api/playout/queue - append a track by filename. Body: { file: "song.mp3" } */
+/** POST /api/queue/queue - append a track by filename. Body: { file: "song.mp3" } */
 queueRouter.post('/queue', (req, res) => {
   const { file } = req.body ?? {}
   if (!file || typeof file !== 'string' || !isMp3File(file)) {
@@ -68,12 +68,18 @@ queueRouter.post('/queue', (req, res) => {
     return
   }
 
+  if (file !== path.basename(file)) {
+    logger.warn({ file }, 'queue append rejected, path traversal')
+    res.status(400).json({ error: 'file must be a plain filename' })
+    return
+  }
+
   queue.append(path.join(AUDIO_DIR, file))
   logger.info({ file }, 'track queued')
   res.json({ ok: true })
 })
 
-/** DELETE /api/playout/queue/:index - remove a track by queue position. */
+/** DELETE /api/queue/queue/:index - remove a track by queue position. */
 queueRouter.delete('/queue/:index', (req, res) => {
   const index = Number(req.params.index)
   if (!Number.isInteger(index) || index < 0) {
